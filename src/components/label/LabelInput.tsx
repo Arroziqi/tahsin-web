@@ -8,7 +8,7 @@ export interface LabelInputProps {
 
 function LabelInput({ label, id, className }: Readonly<LabelInputProps>) {
   return (
-    <label htmlFor={id ?? ''} className={`${className ?? ''} text-[12] text-[#293540]`}>
+    <label htmlFor={id ?? ''} className={`${className ?? ''} text-[12px] text-[#293540]`}>
       {label}
     </label>
   );

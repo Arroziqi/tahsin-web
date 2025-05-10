@@ -6,13 +6,23 @@ interface TextInputWithLabelProps {
   label: string;
   id: string;
   type: HTMLInputElement['type'];
+  placeholder?: string;
+  labelClassName?: string;
+  inputClassName?: string;
 }
 
-function TextInputWithLabel({ label, id, type }: Readonly<TextInputWithLabelProps>) {
+function TextInputWithLabel({
+  label,
+  id,
+  type,
+  placeholder,
+  labelClassName,
+  inputClassName,
+}: Readonly<TextInputWithLabelProps>) {
   return (
     <div className={`flex flex-col gap-[10px]`}>
-      <LabelInput label={label} id={id} />
-      <TextInput type={type} id={id} />
+      <LabelInput className={labelClassName} label={label} id={id} />
+      <TextInput placeholder={placeholder} className={inputClassName} type={type} id={id} />
     </div>
   );
 }

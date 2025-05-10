@@ -20,7 +20,7 @@ function TextInput({
       id={id}
       type={type}
       placeholder={placeholder ?? ' '}
-      className={`${className ?? ' '} rounded-[8] px-[10] py-[7] outline-none text-black`}
+      className={`${className ?? ' '} rounded-[8px] px-[10px] py-[7px] outline-none text-black`}
       style={{ backgroundColor: colors.C07 }}
       {...rest}
     />

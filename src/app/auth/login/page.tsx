@@ -12,7 +12,7 @@ function LoginPage() {
   return (
     <div className={'w-screen h-screen flex justify-center items-center flex-row bg-white'}>
       <div className="bg-white w-1/2 items-center flex flex-col">
-        <CardView className={`bg-white w-[360] mb-9`}>
+        <CardView className={`bg-white w-[360px] mb-9`}>
           <SelectInputWithLabel
             label={'Masuk Sebagai'}
             options={[
@@ -24,10 +24,10 @@ function LoginPage() {
           <TextInputWithLabel label={'Username'} id={'username'} type={'text'} />
           <PasswordInputWithLabel label={'Password'} id={'password'} type={'password'} />
         </CardView>
-        <PrimaryButton text={'Masuk'} onClick={() => console.log('masuk')} />
+        <PrimaryButton width={360} text={'Masuk'} onClick={() => console.log('masuk')} />
         <Copyrigth className={`mt-[20%]`} />
       </div>
-      <div className="bg-[url(/img/alquran.svg)] w-1/2 h-screen bg-center px-[100] flex justify-center items-center flex-col">
+      <div className="bg-[url(/img/alquran.svg)] w-1/2 h-screen bg-center px-[100px] flex justify-center items-center flex-col">
         <div className="">
           <h1 className={'text-2xl text-white'}>
             Selamat Datang di <span className={'font-extrabold'}>Tahsin App</span>{' '}

@@ -13,7 +13,7 @@ export interface SelectInputProps {
 function SelectInput({ options }: Readonly<SelectInputProps>) {
   return (
     <select
-      className={`rounded-[8] px-[10] py-[10] text-black text-[14px]`}
+      className={`rounded-[8px] px-[10px] py-[10px] text-black text-[14px]`}
       style={{ backgroundColor: colors.C07 }}
     >
       {options.map(({ option, value }, index) => (

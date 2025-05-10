@@ -17,7 +17,7 @@ function ItemNavbar({
 }: Readonly<ItemNavbarProps>) {
   return (
     <button
-      className={`flex gap-4 items-center py-2 px-3 rounded-[8] w-full`}
+      className={`flex gap-4 items-center py-2 px-3 rounded-[8px] w-full`}
       style={{ backgroundColor: colors.C05 }}
       onClick={onClick}
     >

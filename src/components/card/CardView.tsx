@@ -8,7 +8,7 @@ interface CardViewProps {
 function CardView({ children, className }: Readonly<CardViewProps>) {
   return (
     <div
-      className={`${className ?? ' '} py-[17] px-[27] rounded-[8] border border-[#e4e4e4] gap-3 flex flex-col`}
+      className={`${className ?? ' '} py-[17px] px-[27px] rounded-[8px] border border-[#e4e4e4] gap-3 flex flex-col`}
     >
       {children}
     </div>

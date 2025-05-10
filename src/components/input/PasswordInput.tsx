@@ -1,3 +1,5 @@
+'use client';
+
 import TextInput, { TextInputProps } from '@/components/input/TextInput';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
