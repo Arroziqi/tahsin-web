@@ -1,3 +1,5 @@
+'use client'; // wajib supaya ini jadi client component
+
 import React from 'react';
 import Navbar from '@/components/navbar/Navbar';
 
@@ -7,7 +9,7 @@ interface LayoutDashboardProps {
 
 function LayoutDashboard({ children }: Readonly<LayoutDashboardProps>) {
   return (
-    <div className={`flex`}>
+    <div className="flex">
       <Navbar />
       {children}
     </div>

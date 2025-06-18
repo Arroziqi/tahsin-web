@@ -1,14 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import PrimaryButton from '@/components/button/PrimaryButton';
 import Copyrigth from '@/components/Copyrigth';
 import CardView from '@/components/card/CardView';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import PasswordInputWithLabel from '@/components/input/PasswordInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
+import { useRouter } from 'next/navigation';
+import { handleLogin } from '@/lib/auth/auth';
 
 function LoginPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const router = useRouter();
+
   return (
     <div className={'w-screen h-screen flex justify-center items-center flex-row bg-white'}>
       <div className="bg-white w-1/2 items-center flex flex-col">
@@ -21,10 +28,24 @@ function LoginPage() {
               { option: 'Option 3', value: '3' },
             ]}
           />
-          <TextInputWithLabel label={'Username'} id={'username'} type={'text'} />
-          <PasswordInputWithLabel label={'Password'} id={'password'} type={'password'} />
+          <TextInputWithLabel
+            label={'Username'}
+            id={'username'}
+            type={'text'}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <PasswordInputWithLabel
+            label={'Password'}
+            id={'password'}
+            type={'password'}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </CardView>
-        <PrimaryButton width={360} text={'Masuk'} onClick={() => console.log('masuk')} />
+        <PrimaryButton
+          width={360}
+          text={'Masuk'}
+          onClick={() => handleLogin(username, password, router)}
+        />
         <Copyrigth className={`mt-[20%]`} />
       </div>
       <div className="bg-[url(/img/alquran.svg)] w-1/2 h-screen bg-center px-[100px] flex justify-center items-center flex-col">
