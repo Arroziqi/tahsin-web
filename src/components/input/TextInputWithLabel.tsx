@@ -10,6 +10,8 @@ export interface TextInputWithLabelProps {
   labelClassName?: string;
   inputClassName?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  validate?: (value: string) => string | null;
 }
 
 function TextInputWithLabel({
@@ -20,6 +22,8 @@ function TextInputWithLabel({
   labelClassName,
   inputClassName,
   onChange,
+  value,
+  validate,
 }: Readonly<TextInputWithLabelProps>) {
   return (
     <div className={`flex flex-col gap-[10px]`}>
@@ -30,6 +34,8 @@ function TextInputWithLabel({
         type={type}
         id={id}
         onChange={onChange}
+        value={value}
+        validate={validate}
       />
     </div>
   );

@@ -10,14 +10,22 @@ interface PrimaryButtonProps {
   onClick: () => void;
   className?: string;
   width?: Width<string | number | undefined>;
+  disabled?: boolean;
 }
 
-function PrimaryButton({ text, onClick, className, width }: Readonly<PrimaryButtonProps>) {
+function PrimaryButton({
+  text,
+  onClick,
+  className,
+  width,
+  disabled,
+}: Readonly<PrimaryButtonProps>) {
   return (
     <button
       onClick={onClick}
-      style={{ backgroundColor: colors.C06, width: width }}
-      className={`${className ?? ''} w-full text-white px-4 py-4 rounded-[10px] text-lg font-semibold`}
+      style={{ backgroundColor: !disabled ? colors.C06 : colors['bg-disabled'], width: width }}
+      className={`${className ?? ''} w-full text-white px-4 py-4 rounded-[10px] text-lg font-semibold cursor-pointer`}
+      disabled={disabled}
     >
       {text}
     </button>

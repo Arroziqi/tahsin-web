@@ -1,3 +1,4 @@
+// SelectInput.tsx
 import React from 'react';
 import colors from '@/constants/colors';
 
@@ -8,16 +9,20 @@ export type SelectOptionType = {
 
 export interface SelectInputProps {
   options: SelectOptionType[];
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-function SelectInput({ options }: Readonly<SelectInputProps>) {
+function SelectInput({ options, value, onChange }: Readonly<SelectInputProps>) {
   return (
     <select
-      className={`rounded-[8px] px-[10px] py-[10px] text-black text-[14px]`}
-      style={{ backgroundColor: colors.C07 }}
+      className={`rounded-[8px] px-[10px] py-[10px] text-black text-[14px] outline-1`}
+      style={{ backgroundColor: colors.C07, outlineColor: colors.C06 }}
+      value={value}
+      onChange={onChange}
     >
       {options.map(({ option, value }, index) => (
-        <option key={index + 1} value={value}>
+        <option key={index} value={value}>
           {option}
         </option>
       ))}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import poppins from '@/constants/poppins';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Tahsin App',
@@ -13,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.className}>
-      <body className={` ${poppins.variable} antialiased overflow-y-hidden`}>{children}</body>
+    <html lang="en" className={`light ${poppins.className}`}>
+      <body className={` ${poppins.variable} antialiased overflow-y-hidden`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -7,7 +7,7 @@ interface TextSectionNavbarProps {
 
 function TextSectionNavbar({ text }: Readonly<TextSectionNavbarProps>) {
   return (
-    <p className={`font-semibold text-[12px]`} style={{ color: colors.C04 }}>
+    <p className={`font-semibold text-[12px] mb-2 mt-4`} style={{ color: colors.C04 }}>
       {text}
     </p>
   );

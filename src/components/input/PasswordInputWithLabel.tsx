@@ -10,6 +10,8 @@ interface PasswordInputWithLabelProps {
   labelClassName?: string;
   inputClassName?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  validate?: (value: string) => string | null;
+  value?: string;
 }
 
 function PasswordInputWithLabel({
@@ -20,6 +22,8 @@ function PasswordInputWithLabel({
   labelClassName,
   inputClassName,
   onChange,
+  validate,
+  value,
 }: Readonly<PasswordInputWithLabelProps>) {
   return (
     <div className={`flex flex-col gap-[10px]`}>
@@ -30,6 +34,8 @@ function PasswordInputWithLabel({
         type={type}
         id={id}
         onChange={onChange}
+        validate={validate}
+        value={value}
       />
     </div>
   );
