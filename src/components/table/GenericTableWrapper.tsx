@@ -1,3 +1,4 @@
+import React from 'react';
 import FilterStatus from '@/components/filter/FilterStatus';
 import SearchBar from '@/components/filter/SearchBar';
 import { ColumnDefinition } from '@/components/table/RichTable';
@@ -7,7 +8,7 @@ import GenericRichTable from '@/components/table/GenericRichTable';
 interface GenericTableProps<T> {
   dataFetched: T[];
   columns: ColumnDefinition<T>[];
-  searchableFields: (keyof T)[];
+  searchableFields: string[];
   loading?: boolean;
   error?: string | null;
 
@@ -18,6 +19,10 @@ interface GenericTableProps<T> {
   statusFieldName?: keyof T;
 
   addDataComponent: React.ReactNode;
+}
+
+function getNestedValue(obj: any, path: string) {
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
 
 function GenericTableWrapper<T>({
@@ -35,7 +40,11 @@ function GenericTableWrapper<T>({
 }: GenericTableProps<T>) {
   const selectedStatusValue =
     showStatusFilter && selectedStatus !== undefined && selectedStatus !== 0
-      ? statusList[selectedStatus]
+      ? statusFieldName === 'isActive'
+        ? selectedStatus === 1
+          ? 'true'
+          : 'false'
+        : statusList[selectedStatus]
       : undefined;
 
   const {
@@ -46,13 +55,15 @@ function GenericTableWrapper<T>({
     currentPage,
     setCurrentPage,
     totalPages,
-    paginatedData,
-  } = useTableController<T>(
-    dataFetched,
-    searchableFields,
-    showStatusFilter ? statusFieldName : undefined,
-    selectedStatusValue
-  );
+    paginatedData: rawPaginatedData,
+  } = useTableController<T>(dataFetched, statusFieldName, selectedStatusValue);
+
+  const filteredData = rawPaginatedData.filter((item) => {
+    return searchableFields.some((field) => {
+      const value = getNestedValue(item, field);
+      return value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  });
 
   const emptyState = (
     <div className="flex flex-col items-center justify-center">
@@ -86,11 +97,14 @@ function GenericTableWrapper<T>({
 
       <GenericRichTable<T>
         columns={columns}
-        data={paginatedData}
+        data={filteredData}
         loading={loading}
         error={error}
-        sortConfig={sortConfig}
-        onSort={requestSort}
+        sortConfig={sortConfig ?? undefined}
+        onSort={(key) => {
+          if (typeof key === 'string' && key.includes('.')) return; // ⛔️ hindari nested key
+          requestSort(key as keyof T); // ✅ pastikan hanya top-level key
+        }}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}

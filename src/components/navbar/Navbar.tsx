@@ -32,6 +32,16 @@ function Navbar() {
           text={'Tambah Jadwal'}
           onClick={() => router.push('/dashboard/class-management/schedule')}
         />
+        <TextSectionNavbar text={`MASTER DATA`} />
+        <ItemNavbar
+          text={'Akun Bank'}
+          onClick={() => router.push('/dashboard/master-data/bank-account')}
+        />
+        <ItemNavbar text={'Event'} onClick={() => router.push('/dashboard/master-data/event')} />
+        <ItemNavbar
+          text={'Periode Akademik'}
+          onClick={() => router.push('/dashboard/master-data/academic-period')}
+        />
       </div>
     </div>
   );

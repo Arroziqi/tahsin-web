@@ -24,6 +24,7 @@ function EditScheduleFormModal({
   const [dayId, setDayId] = useState(initialData.dayId.toString());
   const [timeId, setTimeId] = useState(initialData.timeId.toString());
   const [classType, setClassType] = useState<'ONLINE' | 'OFFLINE'>(initialData.classType);
+  const [isActive, setIsActive] = useState(initialData.isActive ? 'Aktif' : 'Non Aktif');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +35,7 @@ function EditScheduleFormModal({
     setDayId(initialData.dayId.toString());
     setTimeId(initialData.timeId.toString());
     setClassType(initialData.classType);
+    setIsActive(initialData.isActive ? 'Aktif' : 'Non Aktif');
   }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,6 +50,7 @@ function EditScheduleFormModal({
         dayId: Number(dayId),
         timeId: Number(timeId),
         classType,
+        isActive: isActive === 'Aktif',
       });
 
       if (success) {
@@ -102,6 +105,16 @@ function EditScheduleFormModal({
         options={[
           { option: 'Online', value: 'ONLINE' },
           { option: 'Offline', value: 'OFFLINE' },
+        ]}
+      />
+
+      <SelectInputWithLabel
+        label="Status"
+        value={isActive}
+        onChange={(e) => setIsActive(e.target.value)}
+        options={[
+          { option: 'Aktif', value: 'Aktif' },
+          { option: 'Non Aktif', value: 'Non Aktif' },
         ]}
       />
 

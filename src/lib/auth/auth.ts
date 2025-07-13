@@ -1,5 +1,6 @@
 import API from '@/lib/utils/axios';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { API_ROUTES } from '@/common/const/route';
 
 export const handleLogin = async (
   username: string,
@@ -7,7 +8,7 @@ export const handleLogin = async (
   router: AppRouterInstance
 ) => {
   try {
-    const res = await API.post('/api/login', {
+    const res = await API.post(API_ROUTES.AUTH.LOGIN, {
       username,
       password,
     });

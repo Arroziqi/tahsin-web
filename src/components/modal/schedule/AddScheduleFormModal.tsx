@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import colors from '@/constants/colors';
@@ -22,9 +22,21 @@ function AddScheduleFormModal({ refreshSchedules, onSuccess }: AddScheduleFormMo
   const { data: dayOptions } = useDays();
   const { data: timeOptions } = useTimes();
 
+  useEffect(() => {
+    if (dayOptions.length > 0 && dayId === null) {
+      setDayId(dayOptions[0].id);
+    }
+  }, [dayOptions]);
+
+  useEffect(() => {
+    if (timeOptions.length > 0 && timeId === null) {
+      setTimeId(timeOptions[0].id);
+    }
+  }, [timeOptions]);
+
   const resetForm = () => {
-    setDayId(null);
-    setTimeId(null);
+    setDayId(dayOptions[0]?.id ?? null);
+    setTimeId(timeOptions[0]?.id ?? null);
     setClassType('ONLINE');
     setError(null);
   };
@@ -33,7 +45,7 @@ function AddScheduleFormModal({ refreshSchedules, onSuccess }: AddScheduleFormMo
     e.preventDefault();
     setError(null);
 
-    if (!dayId || !timeId || !classType) {
+    if (dayId === null || timeId === null || !classType) {
       setError('Semua field wajib diisi');
       return;
     }

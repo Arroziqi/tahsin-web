@@ -20,6 +20,8 @@ export interface ScheduleResponseDataType {
     endTime: string;
     isActive: boolean;
   };
+  flattenedDay?: string;
+  flattenedSession?: string;
 }
 
 export function useSchedules() {
@@ -36,12 +38,21 @@ export function useSchedules() {
 
       if (!response.data?.data) throw new Error('Data not found');
 
-      setData(response.data.data);
+      const rawData = response.data.data;
+
+      // ⬇️ Tambahkan flattened field untuk kebutuhan sort & filter
+      const transformed = rawData.map((item) => ({
+        ...item,
+        flattenedDay: item.Day?.day || '',
+        flattenedSession: item.Time?.session || '',
+      }));
+
+      setData(transformed);
       setError(null);
     } catch (err: any) {
       if (err.response?.status === 404) {
         setData([]);
-        setError(null); // bukan error, hanya data kosong
+        setError(null);
       } else {
         setError(err.message || 'Gagal memuat data');
       }
@@ -54,5 +65,5 @@ export function useSchedules() {
     fetchData();
   }, [fetchData]);
 
-  return { data, loading, error, setError, refetch: fetchData }; // ⬅️ expose refetch
+  return { data, loading, error, setError, refetch: fetchData };
 }

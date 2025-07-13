@@ -5,17 +5,20 @@ export async function updateSchedule({
   dayId,
   timeId,
   classType,
+  isActive,
 }: {
   id: number;
-  dayId: number;
-  timeId: number;
-  classType: 'ONLINE' | 'OFFLINE';
+  dayId?: number;
+  timeId?: number;
+  classType?: 'ONLINE' | 'OFFLINE';
+  isActive?: boolean;
 }): Promise<boolean> {
   const response = await API.patch('/admin/api/schedule/update', {
     id,
     dayId,
     timeId,
     classType,
+    isActive,
   });
   return response.status === 200;
 }

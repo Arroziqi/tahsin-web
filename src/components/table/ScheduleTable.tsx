@@ -29,22 +29,22 @@ function ScheduleTable({
 
   const columns: ColumnDefinition<ScheduleResponseDataType>[] = [
     {
-      key: 'Day.day',
+      key: 'flattenedDay',
       label: 'Hari',
       className: 'rounded-tl-lg',
-      render: (_, row) => row.Day?.day || '-',
+      render: (_, row) => row.flattenedDay || '-',
     },
     {
-      key: 'Time.session',
+      key: 'flattenedSession',
       label: 'Sesi',
-      render: (_, row) => row.Time?.session || '-',
+      render: (_, row) => row.flattenedSession || '-',
     },
     {
       key: 'classType',
       label: 'Tipe Kelas',
     },
     {
-      key: 'status',
+      key: 'isActive',
       label: 'Status',
       render: (_, row) => {
         const status = row.isActive ? 'Aktif' : 'Non Aktif';
@@ -89,7 +89,7 @@ function ScheduleTable({
       <GenericTableWrapper<ScheduleResponseDataType>
         dataFetched={dataFetched}
         columns={columns}
-        searchableFields={['Day', 'Time', 'classType']}
+        searchableFields={['flattenedDay', 'flattenedSession', 'classType']}
         loading={loading}
         error={error}
         showStatusFilter

@@ -3,13 +3,16 @@ import { useEffect, useMemo, useState } from 'react';
 export type SortDirection = 'ascending' | 'descending';
 
 interface SortConfig<T> {
-  key: keyof T;
+  key: keyof T; // ✅ pastikan hanya keyof T, bukan string | keyof T
   direction: SortDirection;
+}
+
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
 
 function useTableController<T>(
   dataFetched: T[],
-  searchableFields: (keyof T)[],
   statusField?: keyof T,
   selectedStatusValue?: string
 ) {
@@ -19,20 +22,14 @@ function useTableController<T>(
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Reset data when dataFetched changes
   useEffect(() => {
     setData(dataFetched);
-    setCurrentPage(1); // Reset to first page when data changes
+    setCurrentPage(1);
   }, [dataFetched]);
 
-  // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedStatusValue]);
-
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
 
   const requestSort = (key: keyof T) => {
     let direction: SortDirection = 'ascending';
@@ -40,23 +37,19 @@ function useTableController<T>(
       direction = 'descending';
     }
     setSortConfig({ key, direction });
-    setCurrentPage(1); // Reset to first page when sorting
+    setCurrentPage(1);
   };
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      const matchesSearch = searchableFields.some((field) =>
-        String(item[field]).toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
       const matchesStatus =
         statusField && selectedStatusValue
           ? String(item[statusField] ?? '').toLowerCase() === selectedStatusValue.toLowerCase()
           : true;
 
-      return matchesSearch && matchesStatus;
+      return matchesStatus;
     });
-  }, [data, searchableFields, statusField, selectedStatusValue, searchTerm]);
+  }, [data, statusField, selectedStatusValue]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig) return filteredData;
@@ -75,7 +68,6 @@ function useTableController<T>(
 
   const totalPages = Math.max(1, Math.ceil(sortedData.length / itemsPerPage));
 
-  // Ensure currentPage is within valid range
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
@@ -89,7 +81,7 @@ function useTableController<T>(
 
   return {
     searchTerm,
-    setSearchTerm: handleSearch,
+    setSearchTerm,
     sortConfig,
     requestSort,
     currentPage,
@@ -97,8 +89,6 @@ function useTableController<T>(
     itemsPerPage,
     totalPages,
     paginatedData,
-    sortedData, // For debugging purposes
-    filteredData, // For debugging purposes
   };
 }
 

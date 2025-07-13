@@ -54,6 +54,8 @@ function RichTable<T>({
     );
   }
 
+  // @ts-ignore
+  // @ts-ignore
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white text-black rounded-lg">
