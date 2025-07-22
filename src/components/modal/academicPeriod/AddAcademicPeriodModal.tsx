@@ -114,7 +114,7 @@ function AddAcademicPeriodModal({
             <DatePickerWithLabel
               id="startDate"
               label="Tanggal Mulai*"
-              selectedDate={startDate}
+              selectedDate={startDate as Date | undefined}
               onChange={(date) => setStartDate(date)}
               minDate={new Date()}
             />
@@ -123,7 +123,7 @@ function AddAcademicPeriodModal({
             <DatePickerWithLabel
               id="endDate"
               label="Tanggal Berakhir*"
-              selectedDate={endDate}
+              selectedDate={endDate as Date | undefined}
               onChange={(date) => setEndDate(date)}
               minDate={startDate || new Date()}
             />

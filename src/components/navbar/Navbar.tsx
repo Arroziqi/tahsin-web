@@ -42,6 +42,10 @@ function Navbar() {
           text={'Periode Akademik'}
           onClick={() => router.push('/dashboard/master-data/academic-period')}
         />
+        <ItemNavbar
+          text={'Kalender Akademik'}
+          onClick={() => router.push('/dashboard/master-data/academic-calendar')}
+        />
       </div>
     </div>
   );

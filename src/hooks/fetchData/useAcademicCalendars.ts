@@ -1,25 +1,25 @@
 import { useEffect, useState } from 'react';
 import API from '@/lib/utils/axios';
-import { AcademicPeriodResponse } from '@/common/type/academicPeriod/academicPeriodModel';
+import { AcademicCalendarResponse } from '@/common/type/academicCalendar/academicCalendarModel';
 import { API_ROUTES } from '@/common/const/route';
 
-const useAcademicPeriods = () => {
-  const [data, setData] = useState<AcademicPeriodResponse[]>([]);
+const useAcademicCalendars = () => {
+  const [data, setData] = useState<AcademicCalendarResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const fetchAcademicPeriods = async () => {
+  const fetchAcademicCalendars = async () => {
     try {
       setLoading(true);
-      const response = await API.get<{ data: AcademicPeriodResponse[] }>(
-        API_ROUTES.ACADEMIC_PERIOD.GET_ALL
+      const response = await API.get<{ data: AcademicCalendarResponse[] }>(
+        API_ROUTES.ACADEMIC_CALENDAR.GET_ALL
       );
 
       setData(response.data.data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch academic periods');
+      setError(err instanceof Error ? err.message : 'Failed to fetch academic calendars');
     } finally {
       setLoading(false);
     }
@@ -30,7 +30,7 @@ const useAcademicPeriods = () => {
   };
 
   useEffect(() => {
-    fetchAcademicPeriods();
+    fetchAcademicCalendars();
   }, [refreshTrigger]);
 
   return {
@@ -42,4 +42,4 @@ const useAcademicPeriods = () => {
   };
 };
 
-export default useAcademicPeriods;
+export default useAcademicCalendars;

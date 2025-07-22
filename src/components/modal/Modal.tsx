@@ -33,7 +33,7 @@ const Modal: React.FC<ModalProps> = ({
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div
-        className={`bg-white w-full ${sizeClasses[size]} rounded-lg shadow-lg overflow-hidden pb-2`}
+        className={`bg-white w-full ${sizeClasses[size]} rounded-lg shadow-lg overflow-visible pb-2`}
         style={{ color: colors.C02 }}
       >
         <div className="flex justify-between items-center px-6 pt-4">

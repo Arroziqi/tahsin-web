@@ -257,6 +257,15 @@ export const API_ROUTES = {
     GET_BY_ID: (id: number) => `${API_BASE}/academicPeriod/get/${id}`,
   },
 
+  ACADEMIC_CALENDAR: {
+    BASE: `${API_BASE}/academicCalendar`,
+    CREATE: `${API_BASE}/academicCalendar/create`,
+    UPDATE: `${API_BASE}/academicCalendar/update`,
+    DELETE: (id: number) => `${API_BASE}/academicCalendar/delete/${id}`,
+    GET_ALL: `${API_BASE}/academicCalendar/getAll`,
+    GET_BY_ID: (id: number) => `${API_BASE}/academicCalendar/get/${id}`,
+  },
+
   REPORTS: {
     BASE: `${API_BASE}/reports`,
     TRANSACTIONS: `${API_BASE}/reports/transactions`,

@@ -8,7 +8,7 @@ import colors from '@/constants/colors';
 interface DatePickerWithLabelProps {
   id: string;
   label?: string;
-  selectedDate: Date | null;
+  selectedDate?: Date;
   onChange: (date: Date | null) => void;
   required?: boolean;
   disabled?: boolean;
@@ -46,7 +46,7 @@ const DatePickerWithLabel: React.FC<DatePickerWithLabelProps> = ({
 
   const handleBlur = () => {
     if (validate) {
-      const message = validate(selectedDate);
+      const message = validate(selectedDate!);
       setInternalError(message);
     }
   };
