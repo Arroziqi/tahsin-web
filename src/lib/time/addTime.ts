@@ -8,11 +8,6 @@ interface AddTimeInput {
 }
 
 export const addTime = async (payload: AddTimeInput): Promise<boolean> => {
-  try {
-    const response = await API.post('/admin/api/time/create', payload);
-    return response.status === 201 || response.status === 200;
-  } catch (err) {
-    console.error('Add Time Error:', err);
-    throw err;
-  }
+  const response = await API.post('/admin/api/time/create', payload);
+  return response.status === 201 || response.status === 200;
 };

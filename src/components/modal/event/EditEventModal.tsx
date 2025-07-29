@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { updateEvent } from '@/lib/event/updateEvent';
 import { EventResponse } from '@/common/type/event/eventModel';
 
@@ -54,7 +54,6 @@ function EditEventModal({ initialData, onClose, refreshEvents, onSuccess }: Edit
     } catch (err) {
       const handled = handleApiError(err);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

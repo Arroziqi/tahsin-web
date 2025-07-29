@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { addAcademicCalendar } from '@/lib/academicCalendar/addAcademicCalendar';
@@ -34,6 +34,20 @@ function AddAcademicCalendarModal({
   const activePeriods = useMemo(() => {
     return (periods ?? []).filter((p) => p.isActive === true);
   }, [periods]);
+
+  const selectedPeriod = useMemo(() => {
+    return activePeriods.find((_) => _.id.toString() === academicPeriodId);
+  }, [academicPeriodId, activePeriods]);
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      setStartDate(new Date(selectedPeriod.startDate));
+      setEndDate(new Date(selectedPeriod.endDate));
+    } else {
+      setStartDate(undefined);
+      setEndDate(undefined);
+    }
+  }, [selectedPeriod]);
 
   const activeEvents = useMemo(() => {
     return (events ?? []).filter((e) => e.isActive);
@@ -140,20 +154,25 @@ function AddAcademicCalendarModal({
           <div className="w-full">
             <DatePickerWithLabel
               id="startDate"
-              label="Tanggal Mulai Event*"
+              label="Tanggal Mulai Event"
               selectedDate={startDate}
               onChange={(date: Date | null) => setStartDate(date || undefined)}
               required
+              minDate={selectedPeriod ? new Date(selectedPeriod.startDate) : undefined}
+              maxDate={selectedPeriod ? new Date(selectedPeriod.endDate) : undefined}
             />
           </div>
           <div className="w-full">
             <DatePickerWithLabel
               id="endDate"
-              label="Tanggal Berakhir Event*"
+              label="Tanggal Berakhir Event"
               selectedDate={endDate}
               onChange={(date: Date | null) => setEndDate(date || undefined)}
-              minDate={startDate}
               required
+              minDate={
+                startDate ?? (selectedPeriod ? new Date(selectedPeriod.startDate) : undefined)
+              }
+              maxDate={selectedPeriod ? new Date(selectedPeriod.endDate) : undefined}
             />
           </div>
         </div>

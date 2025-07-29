@@ -8,11 +8,7 @@ import { API_ROUTES } from '@/common/const/route';
 export const addAcademicCalendar = async (
   data: CreateAcademicCalendarRequest
 ): Promise<AcademicCalendarResponse> => {
-  try {
-    const response = await API.post(API_ROUTES.ACADEMIC_CALENDAR.CREATE, data);
+  const response = await API.post(API_ROUTES.ACADEMIC_CALENDAR.CREATE, data);
 
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data.message);
-  }
+  return response.data;
 };

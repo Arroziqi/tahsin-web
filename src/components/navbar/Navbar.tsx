@@ -46,6 +46,10 @@ function Navbar() {
           text={'Kalender Akademik'}
           onClick={() => router.push('/dashboard/master-data/academic-calendar')}
         />
+        <ItemNavbar
+          text={'Biaya Pembayaran'}
+          onClick={() => router.push('/dashboard/master-data/payment-fee')}
+        />
       </div>
     </div>
   );

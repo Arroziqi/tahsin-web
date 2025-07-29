@@ -39,6 +39,24 @@ function EditAcademicCalendarModal({
     return (periods ?? []).filter((p) => p.isActive === true);
   }, [periods]);
 
+  const selectedPeriod = useMemo(() => {
+    return activePeriods.find((p) => p.id === academicPeriodId);
+  }, [academicPeriodId, activePeriods]);
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      const newStart = new Date(selectedPeriod.startDate);
+      const newEnd = new Date(selectedPeriod.endDate);
+
+      if (!startDate || startDate < newStart || startDate > newEnd) {
+        setStartDate(newStart);
+      }
+      if (!endDate || endDate < newStart || endDate > newEnd) {
+        setEndDate(newEnd);
+      }
+    }
+  }, [endDate, selectedPeriod, startDate]);
+
   const activeEvents = useMemo(() => {
     return (events ?? []).filter((e) => e.isActive);
   }, [events]);
@@ -140,15 +158,18 @@ function EditAcademicCalendarModal({
           <DatePickerWithLabel
             id="editStartDate"
             label="Tanggal Mulai Event*"
-            selectedDate={startDate as Date | undefined}
+            selectedDate={startDate ?? undefined}
             onChange={(date) => setStartDate(date)}
+            minDate={selectedPeriod ? new Date(selectedPeriod.startDate) : undefined}
+            maxDate={selectedPeriod ? new Date(selectedPeriod.endDate) : undefined}
           />
           <DatePickerWithLabel
             id="editEndDate"
             label="Tanggal Berakhir Event*"
-            selectedDate={endDate as Date | undefined}
+            selectedDate={endDate ?? undefined}
             onChange={(date) => setEndDate(date)}
-            minDate={startDate as Date | undefined}
+            minDate={startDate ?? (selectedPeriod ? new Date(selectedPeriod.startDate) : undefined)}
+            maxDate={selectedPeriod ? new Date(selectedPeriod.endDate) : undefined}
           />
         </div>
 

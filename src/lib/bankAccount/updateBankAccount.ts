@@ -12,14 +12,9 @@ export type UpdateBankAccountRequest = {
 export const updateBankAccount = async (
   payload: UpdateBankAccountRequest
 ): Promise<BankAccountResponse> => {
-  try {
-    const response = await API.patch<{ data: BankAccountResponse }>(
-      '/admin/api/bankAccount/update',
-      payload
-    );
-    return response.data.data;
-  } catch (err) {
-    console.error('Update Bank Account Error:', err);
-    throw err;
-  }
+  const response = await API.patch<{ data: BankAccountResponse }>(
+    '/admin/api/bankAccount/update',
+    payload
+  );
+  return response.data.data;
 };
