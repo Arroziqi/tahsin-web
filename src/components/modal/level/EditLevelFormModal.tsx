@@ -4,7 +4,7 @@ import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { updateLevel } from '@/lib/level/updateLevel';
 import { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 
 interface EditLevelFormModalProps {
   initialData: LevelResponseDataType;
@@ -53,8 +53,6 @@ function EditLevelFormModal({
     } catch (error) {
       const handledError = handleApiError(error);
       setError(handledError.message);
-
-      console.error(getErrorMessage(handledError));
     } finally {
       setLoading(false);
     }

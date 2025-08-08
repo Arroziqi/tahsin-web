@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { updateSchedule } from '@/lib/schedule/updateSchedule';
 import { ScheduleResponseDataType } from '@/hooks/fetchData/useSchedules';
 import useDays from '@/hooks/fetchData/useDays';
@@ -65,7 +65,6 @@ function EditScheduleFormModal({
     } catch (error) {
       const handled = handleApiError(error);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

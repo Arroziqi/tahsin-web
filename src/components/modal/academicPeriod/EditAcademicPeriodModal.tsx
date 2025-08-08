@@ -5,7 +5,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { updateAcademicPeriod } from '@/lib/academicPeriod/updateAcademicPeriod';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { AcademicPeriodResponse } from '@/common/type/academicPeriod/academicPeriodModel';
 import DatePickerWithLabel from '@/components/input/DatePickerWithLabel';
 import TextAreaWithLabel from '@/components/input/TextAreaWithLabel';
@@ -77,7 +77,6 @@ function EditAcademicPeriodModal({
     } catch (err) {
       const handled = handleApiError(err);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }
@@ -106,13 +105,13 @@ function EditAcademicPeriodModal({
         <DatePickerWithLabel
           id="editStartDate"
           label="Tanggal Mulai*"
-          selectedDate={startDate}
+          selectedDate={startDate!}
           onChange={(date) => setStartDate(date)}
         />
         <DatePickerWithLabel
           id="editEndDate"
           label="Tanggal Berakhir*"
-          selectedDate={endDate}
+          selectedDate={endDate!}
           onChange={(date) => setEndDate(date)}
           minDate={startDate || new Date()}
         />

@@ -5,7 +5,7 @@ import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import colors from '@/constants/colors';
 import { FaPlusCircle } from 'react-icons/fa';
 import { addEvent } from '@/lib/event/addEvent';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 
 interface AddEventModalProps {
   refreshEvents?: () => void;
@@ -53,7 +53,6 @@ function AddEventModal({ refreshEvents, onSuccess }: AddEventModalProps) {
     } catch (err) {
       const handled = handleApiError(err);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

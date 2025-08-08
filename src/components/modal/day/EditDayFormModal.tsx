@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { DayResponseDataType } from '@/hooks/fetchData/useDays';
 import { updateDay } from '@/lib/day/updateDay';
 
@@ -54,7 +54,6 @@ function EditDayFormModal({ initialData, onClose, refreshDays, onSuccess }: Edit
     } catch (error) {
       const handled = handleApiError(error);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

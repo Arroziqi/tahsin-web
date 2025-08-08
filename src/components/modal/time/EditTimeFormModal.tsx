@@ -3,7 +3,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { TimeResponseDataType } from '@/hooks/fetchData/useTimes';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { updateTime } from '@/lib/time/updateTime';
 
 interface EditTimeFormModalProps {
@@ -64,7 +64,6 @@ function EditTimeFormModal({
     } catch (error) {
       const handled = handleApiError(error);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

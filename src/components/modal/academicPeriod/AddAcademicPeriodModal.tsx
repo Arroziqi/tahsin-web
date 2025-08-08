@@ -5,7 +5,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { addAcademicPeriod } from '@/lib/academicPeriod/addAcademicPeriod';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { FaPlusCircle } from 'react-icons/fa';
 import colors from '@/constants/colors';
 import DatePickerWithLabel from '@/components/input/DatePickerWithLabel';
@@ -74,7 +74,6 @@ function AddAcademicPeriodModal({
     } catch (err) {
       const handled = handleApiError(err);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }
