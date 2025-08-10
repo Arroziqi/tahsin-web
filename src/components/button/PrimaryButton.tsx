@@ -7,7 +7,7 @@ import Width = Property.Width;
 
 interface PrimaryButtonProps {
   text: string;
-  onClick: () => void;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
   width?: Width<string | number | undefined>;
   disabled?: boolean;

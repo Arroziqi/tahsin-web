@@ -50,6 +50,11 @@ function Navbar() {
           text={'Biaya Pembayaran'}
           onClick={() => router.push('/dashboard/master-data/payment-fee')}
         />
+        <TextSectionNavbar text={`Pendaftaran`} />
+        <ItemNavbar
+          text={'Pendaftaran Offline'}
+          onClick={() => router.push('/dashboard/student-management/offline-registration')}
+        />
       </div>
     </div>
   );

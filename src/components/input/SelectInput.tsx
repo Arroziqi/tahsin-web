@@ -11,11 +11,13 @@ export interface SelectInputProps {
   options: SelectOptionType[];
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled: boolean;
 }
 
-function SelectInput({ options, value, onChange }: Readonly<SelectInputProps>) {
+function SelectInput({ options, value, onChange, disabled = false }: Readonly<SelectInputProps>) {
   return (
     <select
+      disabled={disabled}
       className={`rounded-[8px] px-[10px] py-[10px] text-black text-[14px] outline-1`}
       style={{ backgroundColor: colors.C07, outlineColor: colors.C06 }}
       value={value}

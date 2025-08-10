@@ -2,16 +2,22 @@ import { AxiosError } from 'axios';
 
 export function handleApiError(err: unknown): { message: string } {
   if (err instanceof AxiosError) {
-    const details = err.response?.data?.errors?.details;
-    const generic = err.response?.data?.errors?.message;
+    const data = err.response?.data;
 
+    // Kalau ada array details
+    const details = data?.errors?.details;
     if (Array.isArray(details) && details.length > 0) {
-      const messages = details.map((d: any) => d.message).join(', ');
-      return { message: messages };
+      return { message: details.map((d: any) => d.message).join(', ') };
     }
 
-    if (generic) {
-      return { message: generic };
+    // Kalau ada generic di errors
+    if (data?.errors?.message) {
+      return { message: data.errors.message };
+    }
+
+    // Kalau ada message langsung di root
+    if (data?.message) {
+      return { message: data.message };
     }
   }
 

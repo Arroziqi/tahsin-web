@@ -37,7 +37,7 @@ const TextAreaWithLabel: React.FC<TextAreaWithLabelProps> = ({
   maxLength,
 }) => {
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`flex flex-col ${className} text-gray-700`}>
       {label && (
         <label htmlFor={id} className={`mb-1 text-sm font-medium text-gray-700 ${labelClassName}`}>
           {label}

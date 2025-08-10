@@ -7,6 +7,7 @@ interface SelectInputWithLabelProps {
   options: SelectOptionType[];
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  disabled?: boolean;
 }
 
 function SelectInputWithLabel({
@@ -14,11 +15,12 @@ function SelectInputWithLabel({
   options,
   value,
   onChange,
+  disabled = false,
 }: Readonly<SelectInputWithLabelProps>) {
   return (
     <div className="flex flex-col gap-[10px]">
       <LabelInput label={label} />
-      <SelectInput options={options} value={value} onChange={onChange} />
+      <SelectInput disabled={disabled} options={options} value={value} onChange={onChange} />
     </div>
   );
 }

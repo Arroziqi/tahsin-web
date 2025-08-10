@@ -12,6 +12,7 @@ export interface TextInputWithLabelProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   validate?: (value: string) => string | null;
+  disabled?: boolean;
 }
 
 function TextInputWithLabel({
@@ -24,11 +25,13 @@ function TextInputWithLabel({
   onChange,
   value,
   validate,
+  disabled = false,
 }: Readonly<TextInputWithLabelProps>) {
   return (
     <div className={`flex flex-col gap-[10px]`}>
       <LabelInput className={labelClassName} label={label} id={id} />
       <TextInput
+        disabled={disabled}
         placeholder={placeholder}
         className={inputClassName}
         type={type}
