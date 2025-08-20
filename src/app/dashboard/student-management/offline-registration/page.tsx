@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useStudents from '@/hooks/fetchData/useStudents';
 import Topbar from '@/components/topbar/Topbar';
 import TitlePage from '@/components/text/TitlePage';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 import { CreateEnrollmentRequest } from '@/common/type/enrollment/enrollmentModel';
@@ -19,74 +18,103 @@ import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModa
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { addEnrollment } from '@/lib/enrollment/addEnrollment';
 import TextAreaWithLabel from '@/components/input/TextAreaWithLabel';
+import { useForm } from 'react-hook-form';
+import { getActiveAcademicPeriod } from '@/lib/academicPeriod/getActiveAcademicPeriod';
+import TextInputWithLabelRHF from '@/components/input/TextInputWithLableRHF';
+import TextInputWithLabel from '@/components/input/TextInputWithLabel';
+import UsernameCreatableSelect from '@/components/ui/UsernameCreatableSelect';
 
 function OfflineRegistrationPage() {
-  const { data: students, error, setError } = useStudents();
+  const {
+    data: students,
+    error: studentsError,
+    setError: setStudentsError,
+    refresh: refreshStudent,
+  } = useStudents();
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
   const [loading, setLoading] = useState(false);
+  const [activeAcademicPeriod, setActiveAcademicPeriod] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+  const [academicPeriodLoading, setAcademicPeriodLoading] = useState(true);
 
-  const [payload, setPayload] = React.useState<Partial<CreateEnrollmentRequest>>({});
-  const [selectedStudent, setSelectedStudent] = React.useState<any>(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+    reset,
+    trigger,
+  } = useForm<CreateEnrollmentRequest>({
+    mode: 'onChange',
+    defaultValues: {
+      username: '',
+      email: '',
+      fullName: '',
+      motivation: '',
+      dateOfBirth: undefined,
+      noTelp: '',
+      lastEducation: undefined,
+      program: undefined,
+      classType: undefined,
+      timeOfStudy: undefined,
+      academicPeriodId: undefined,
+    },
+  });
 
-  const isFormValid = React.useMemo(() => {
-    const requiredFields: (keyof CreateEnrollmentRequest)[] = [
-      'username',
-      'email',
-      'fullName',
-      'motivation',
-      'dateOfBirth',
-      'noTelp',
-      'lastEducation',
-      'program',
-      'classType',
-      'timeOfStudy',
-      'academicPeriodId',
-    ];
-    return requiredFields.every((field) => {
-      const value = payload[field];
-      if (field === 'dateOfBirth') return value instanceof Date && !isNaN(value.getTime());
-      return value !== undefined && value !== null && value !== '';
-    });
-  }, [payload]);
+  const selectedUserId = watch('userId');
 
-  const handleChange = (field: string, value: any) => {
-    setPayload((prev) => ({
-      ...prev,
-      [field]: value?.target?.value ?? value, // kalau value dari event, ambil value-nya
-    }));
-  };
+  // Fetch active academic period on component mount
+  useEffect(() => {
+    const fetchActiveAcademicPeriod = async () => {
+      try {
+        setAcademicPeriodLoading(true);
+        const period = await getActiveAcademicPeriod();
 
-  const handleSelectStudent = (userId: number) => {
-    const student = students?.find((s) => s.userId === userId) || null;
-    setSelectedStudent(student);
+        if (period) {
+          setActiveAcademicPeriod({ id: period.id, name: period.name });
+          setValue('academicPeriodId', period.id);
+        }
+      } catch (error) {
+        console.error('Failed to fetch active academic period:', error);
+        setStudentsError('Gagal memuat periode akademik aktif');
+      } finally {
+        setAcademicPeriodLoading(false);
+      }
+    };
 
-    if (student) {
-      setPayload((prev) => ({
-        ...prev,
-        userId: student.userId,
-        username: student.username, // sudah ada
-        email: student.email, // sudah ada
-        fullName: student.fullName || '',
-        dateOfBirth: student.dateOfBirth ? new Date(student.dateOfBirth) : undefined,
-        noTelp: student.noTelp || '',
-        lastEducation: student.lastEducation || undefined,
-        motivation: student.motivation || '',
-      }));
-    } else {
-      setPayload({});
+    fetchActiveAcademicPeriod();
+  }, [setValue, setStudentsError]);
+
+  // Auto-fill student data when user selects a student
+  useEffect(() => {
+    if (selectedUserId) {
+      const student = students?.find((s) => s.userId === Number(selectedUserId));
+      if (student) {
+        setValue('username', student.username);
+        setValue('email', student.email);
+        setValue('fullName', student.fullName || '');
+        setValue('motivation', student.motivation || '');
+        setValue('dateOfBirth', student.dateOfBirth ? new Date(student.dateOfBirth) : new Date());
+        setValue('noTelp', student.noTelp || '');
+        setValue('lastEducation', student.lastEducation as Education);
+
+        // Trigger validation after setting values
+        trigger();
+      }
     }
-  };
+  }, [selectedUserId, students, setValue, trigger]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const handleFormSubmit = async (data: CreateEnrollmentRequest) => {
+    setStudentsError(null);
 
     try {
       setLoading(true);
 
-      // Kirim payload sesuai CreateEnrollmentRequest
-      const response = await addEnrollment(payload as CreateEnrollmentRequest);
+      const response = await addEnrollment(data);
 
       if (response) {
         setShowSuccess(true);
@@ -95,14 +123,14 @@ function OfflineRegistrationPage() {
           description: 'Enrollment berhasil dibuat di sistem',
         });
 
-        // Reset form & state
-        setPayload({});
-        setSelectedStudent(null);
+        // Reset form
+        reset();
+        refreshStudent();
       }
     } catch (err: any) {
       const handled = handleApiError(err);
       console.log(err);
-      setError(handled.message);
+      setStudentsError(handled.message);
     } finally {
       setLoading(false);
     }
@@ -118,9 +146,9 @@ function OfflineRegistrationPage() {
   const enumToOptions = (e: any, placeholder: string) =>
     [{ value: '', option: placeholder }].concat(
       Object.keys(e)
-        .filter((key) => isNaN(Number(key))) // ambil hanya nama enum
+        .filter((key) => isNaN(Number(key)))
         .map((key) => ({
-          value: key, // simpan nama enum sebagai string
+          value: key,
           option: key,
         }))
     );
@@ -132,104 +160,159 @@ function OfflineRegistrationPage() {
         <div className="mx-auto pt-[103px] flex flex-col gap-5 max-w-[936px] w-full h-fit pb-9">
           <TitlePage title="Pendaftaran Offline" />
 
-          {/* Pilih Student */}
-          <SelectInputWithLabel
-            label={'Nama Siswa (User ID)'}
-            options={studentOptions}
-            value={payload.userId?.toString() || ''} // biar sync
-            onChange={(e) => handleSelectStudent(Number(e.target.value))}
-          />
+          <form className={'flex flex-col gap-5'} onSubmit={handleSubmit(handleFormSubmit)}>
+            {/* Pilih Student */}
+            <SelectInputWithLabel
+              label={'Nama Siswa (User ID)'}
+              options={studentOptions}
+              value={watch('userId')?.toString() || ''}
+              onChange={(e) => setValue('userId', Number(e.target.value))}
+            />
 
-          {/* Form Fields */}
-          <TextInputWithLabel
-            label={'Username'}
-            id={'username'}
-            type={'text'}
-            value={payload.username || ''}
-            onChange={(e) => handleChange('username', e.target.value)}
-            disabled={!!selectedStudent}
-          />
-          <TextInputWithLabel
-            label={'Email'}
-            id={'email'}
-            type={'email'}
-            value={payload.email || ''}
-            onChange={(e) => handleChange('email', e.target.value)}
-            disabled={!!selectedStudent}
-          />
-          <TextInputWithLabel
-            label={'Full Name'}
-            id={'fullName'}
-            type={'text'}
-            value={payload.fullName || ''}
-            onChange={(e) => handleChange('fullName', e.target.value)}
-            disabled={!!selectedStudent}
-          />
-          <TextAreaWithLabel
-            label={'Motivation'}
-            id={'motivation'}
-            value={payload.motivation || ''}
-            onChange={(e) => handleChange('motivation', e.target.value)}
-            disabled={!!selectedStudent}
-          />
-          <TextInputWithLabel
-            label={'Date of Birth'}
-            id={'dateOfBirth'}
-            type={'date'}
-            value={
-              payload.dateOfBirth ? new Date(payload.dateOfBirth).toISOString().split('T')[0] : ''
-            }
-            onChange={(e) => handleChange('dateOfBirth', new Date(e.target.value))}
-            disabled={!!selectedStudent}
-          />
-          <TextInputWithLabel
-            label={'No Telp'}
-            id={'noTelp'}
-            type={'text'}
-            value={payload.noTelp || ''}
-            onChange={(e) => handleChange('noTelp', e.target.value)}
-            disabled={!!selectedStudent}
-          />
-          <SelectInputWithLabel
-            label={'Last Education'}
-            options={enumToOptions(Education, 'Pilih pendidikan terakhir')}
-            value={payload.lastEducation || ''}
-            onChange={(val) => handleChange('lastEducation', val)}
-            disabled={!!selectedStudent}
-          />
+            <UsernameCreatableSelect
+              value={watch('username') || ''}
+              onChange={(username, userData) => {
+                setValue('username', username, { shouldValidate: true });
 
-          <SelectInputWithLabel
-            label={'Program'}
-            options={enumToOptions(Program, 'Pilih program')}
-            value={payload.program || ''}
-            onChange={(val) => handleChange('program', val)}
-          />
-          <SelectInputWithLabel
-            label={'Jenis Kelas'}
-            options={enumToOptions(ClassType, 'Pilih jenis kelas')}
-            value={payload.classType || ''}
-            onChange={(val) => handleChange('classType', val)}
-          />
-          <SelectInputWithLabel
-            label={'Waktu belajar'}
-            options={enumToOptions(TimeOfStudy, 'Pilih waktu belajar')}
-            value={payload.timeOfStudy || ''}
-            onChange={(val) => handleChange('timeOfStudy', val)}
-          />
-          <TextInputWithLabel
-            label={'Academic Period ID'}
-            id={'academicPeriodId'}
-            type={'number'}
-            value={payload.academicPeriodId?.toString() || ''}
-            onChange={(e) => handleChange('academicPeriodId', Number(e.target.value))}
-          />
+                if (userData) {
+                  setValue('email', userData.email, { shouldValidate: true });
+                  setValue('fullName', userData.displayName, { shouldValidate: true });
+                } else if (!watch('email')) {
+                  setValue('email', '', { shouldValidate: true });
+                }
+              }}
+              disabled={!!selectedUserId}
+              onBlur={() => trigger('username')}
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+            )}
 
-          <PrimaryButton
-            text={'Daftar'}
-            onClick={handleSubmit}
-            className={'w-full'}
-            disabled={!isFormValid}
-          />
+            {/* Form Fields - Using TextInputWithLabelRHF */}
+
+            <TextInputWithLabelRHF
+              label={'Email'}
+              id={'email'}
+              type={'email'}
+              registration={register('email', {
+                required: 'Email wajib diisi',
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: 'Format email tidak valid',
+                },
+              })}
+              error={errors.email?.message}
+              disabled={!!selectedUserId}
+            />
+
+            <TextInputWithLabelRHF
+              label={'Full Name'}
+              id={'fullName'}
+              type={'text'}
+              registration={register('fullName', { required: 'Nama lengkap wajib diisi' })}
+              error={errors.fullName?.message}
+              disabled={!!selectedUserId}
+            />
+
+            {/* Note: You'll need to create a similar RHF version for TextAreaWithLabel */}
+            <TextAreaWithLabel
+              label={'Motivation'}
+              id={'motivation'}
+              value={watch('motivation') || ''}
+              onChange={(e) => setValue('motivation', e.target.value)}
+              disabled={!!selectedUserId}
+            />
+            {errors.motivation && (
+              <p className="text-red-500 text-sm mt-1">{errors.motivation.message}</p>
+            )}
+
+            <TextInputWithLabelRHF
+              label={'Date of Birth'}
+              id={'dateOfBirth'}
+              type={'date'}
+              registration={register('dateOfBirth', {
+                required: 'Tanggal lahir wajib diisi',
+                valueAsDate: true,
+              })}
+              error={errors.dateOfBirth?.message}
+              disabled={!!selectedUserId}
+            />
+
+            <TextInputWithLabelRHF
+              label={'No Telp'}
+              id={'noTelp'}
+              type={'text'}
+              registration={register('noTelp', { required: 'Nomor telepon wajib diisi' })}
+              error={errors.noTelp?.message}
+              disabled={!!selectedUserId}
+            />
+
+            <SelectInputWithLabel
+              label={'Last Education'}
+              options={enumToOptions(Education, 'Pilih pendidikan terakhir')}
+              value={watch('lastEducation') || ''}
+              onChange={(e) => setValue('lastEducation', e.target.value as Education)} // Extract value
+              disabled={!!selectedUserId}
+            />
+
+            <SelectInputWithLabel
+              label={'Program'}
+              options={enumToOptions(Program, 'Pilih program')}
+              value={watch('program') || ''}
+              onChange={(e) => setValue('program', e.target.value as Program)} // Extract value
+            />
+
+            <SelectInputWithLabel
+              label={'Jenis Kelas'}
+              options={enumToOptions(ClassType, 'Pilih jenis kelas')}
+              value={watch('classType') || ''}
+              onChange={(e) => setValue('classType', e.target.value as ClassType)} // Extract value
+            />
+
+            <SelectInputWithLabel
+              label={'Waktu belajar'}
+              options={enumToOptions(TimeOfStudy, 'Pilih waktu belajar')}
+              value={watch('timeOfStudy') || ''}
+              onChange={(e) => setValue('timeOfStudy', e.target.value as TimeOfStudy)} // Extract value
+            />
+
+            {/* Academic Period - Display as text but store ID */}
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700">Periode Akademik</label>
+              {academicPeriodLoading ? (
+                <div className="animate-pulse bg-gray-200 rounded-md h-10"></div>
+              ) : activeAcademicPeriod ? (
+                <>
+                  <input
+                    type="hidden"
+                    {...register('academicPeriodId', {
+                      required: 'Periode akademik wajib dipilih',
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <TextInputWithLabel
+                    label={''}
+                    id={'academicPeriodDisplay'}
+                    type={'text'}
+                    value={activeAcademicPeriod.name}
+                    disabled={true}
+                  />
+                </>
+              ) : (
+                <div className="text-red-500 text-sm">Tidak ada periode akademik aktif</div>
+              )}
+              {errors.academicPeriodId && (
+                <p className="text-red-500 text-sm mt-1">{errors.academicPeriodId.message}</p>
+              )}
+            </div>
+
+            <PrimaryButton
+              text={'Daftar'}
+              type="submit"
+              className={'w-full mt-5'}
+              disabled={!isValid || loading || !activeAcademicPeriod}
+            />
+          </form>
         </div>
       </div>
 
@@ -242,17 +325,17 @@ function OfflineRegistrationPage() {
       )}
 
       {/* Error Notification */}
-      {error && (
+      {studentsError && (
         <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center">
           <svg className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor" />
-          {error}
-          <button onClick={() => setError(null)} className="ml-2">
+          {studentsError}
+          <button onClick={() => setStudentsError(null)} className="ml-2">
             ×
           </button>
         </div>
       )}
 
-      {/*  success modal*/}
+      {/* Success modal */}
       <ConfirmationSuccessModal
         isOpen={showSuccess}
         onClose={() => setShowSuccess(false)}

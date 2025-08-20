@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import useAcademicPeriods from '@/hooks/fetchData/useAcademicPeriods';
+import useAcademicPeriods from '@/hooks/fetchData/academicPeriod/useAcademicPeriods';
 import { addPaymentFee } from '@/lib/paymentFee/addPaymentFee';
 import { PaymentFeeResponse } from '@/common/type/paymentFee/paymentFeeModel';
 import { handleApiError } from '@/lib/utils/errorHandler';

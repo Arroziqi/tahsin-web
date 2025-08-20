@@ -6,7 +6,7 @@ import TitlePage from '@/components/text/TitlePage';
 import CardView from '@/components/card/CardView';
 import StatsWithIcon from '@/components/card/StatsWithIcon';
 import AcademicPeriodTable from '@/components/table/AcademicPeriodTable';
-import useAcademicPeriods from '@/hooks/fetchData/useAcademicPeriods';
+import useAcademicPeriods from '@/hooks/fetchData/academicPeriod/useAcademicPeriods';
 
 function AcademicPeriodPage() {
   const { data, loading, error, refresh, setError } = useAcademicPeriods();

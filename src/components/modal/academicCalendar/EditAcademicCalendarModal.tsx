@@ -7,7 +7,7 @@ import { updateAcademicCalendar } from '@/lib/academicCalendar/updateAcademicCal
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { AcademicCalendarResponse } from '@/common/type/academicCalendar/academicCalendarModel';
 import DatePickerWithLabel from '@/components/input/DatePickerWithLabel';
-import useAcademicPeriods from '@/hooks/fetchData/useAcademicPeriods';
+import useAcademicPeriods from '@/hooks/fetchData/academicPeriod/useAcademicPeriods';
 import useEvents from '@/hooks/fetchData/useEvents';
 
 interface EditAcademicCalendarModalProps {

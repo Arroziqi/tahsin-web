@@ -5,7 +5,7 @@ import colors from '@/constants/colors';
 
 interface TextAreaWithLabelProps {
   label?: string;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   required?: boolean;
   disabled?: boolean;

@@ -7,10 +7,11 @@ import Width = Property.Width;
 
 interface PrimaryButtonProps {
   text: string;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
   width?: Width<string | number | undefined>;
   disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 function PrimaryButton({
@@ -19,9 +20,11 @@ function PrimaryButton({
   className,
   width,
   disabled,
+  type = 'button',
 }: Readonly<PrimaryButtonProps>) {
   return (
     <button
+      type={type}
       onClick={onClick}
       style={{ backgroundColor: !disabled ? colors.C06 : colors['bg-disabled'], width: width }}
       className={`${className ?? ''} w-full text-white px-4 py-4 rounded-[10px] text-lg font-semibold cursor-pointer`}

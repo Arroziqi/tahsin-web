@@ -10,38 +10,52 @@ export interface TextInputWithLabelProps {
   labelClassName?: string;
   inputClassName?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   value?: string;
+  name?: string;
   validate?: (value: string) => string | null;
   disabled?: boolean;
+  ref?: React.Ref<HTMLInputElement>; // Added ref prop
 }
 
-function TextInputWithLabel({
-  label,
-  id,
-  type,
-  placeholder,
-  labelClassName,
-  inputClassName,
-  onChange,
-  value,
-  validate,
-  disabled = false,
-}: Readonly<TextInputWithLabelProps>) {
-  return (
-    <div className={`flex flex-col gap-[10px]`}>
-      <LabelInput className={labelClassName} label={label} id={id} />
-      <TextInput
-        disabled={disabled}
-        placeholder={placeholder}
-        className={inputClassName}
-        type={type}
-        id={id}
-        onChange={onChange}
-        value={value}
-        validate={validate}
-      />
-    </div>
-  );
-}
+// Use forwardRef to support ref forwarding
+const TextInputWithLabel = React.forwardRef<HTMLInputElement, TextInputWithLabelProps>(
+  function TextInputWithLabel(
+    {
+      label,
+      id,
+      type,
+      placeholder,
+      labelClassName,
+      inputClassName,
+      onChange,
+      onBlur,
+      value,
+      name,
+      validate,
+      disabled = false,
+    },
+    ref
+  ) {
+    return (
+      <div className={`flex flex-col gap-[10px]`}>
+        <LabelInput className={labelClassName} label={label} id={id} />
+        <TextInput
+          disabled={disabled}
+          placeholder={placeholder}
+          className={inputClassName}
+          type={type}
+          id={id}
+          onChange={onChange}
+          onBlur={onBlur}
+          value={value}
+          name={name}
+          validate={validate}
+          ref={ref} // Pass ref to TextInput
+        />
+      </div>
+    );
+  }
+);
 
 export default TextInputWithLabel;

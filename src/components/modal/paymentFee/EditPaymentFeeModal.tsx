@@ -5,7 +5,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import DatePickerWithLabel from '@/components/input/DatePickerWithLabel';
-import useAcademicPeriods from '@/hooks/fetchData/useAcademicPeriods';
+import useAcademicPeriods from '@/hooks/fetchData/academicPeriod/useAcademicPeriods';
 import { PaymentFeeResponse } from '@/common/type/paymentFee/paymentFeeModel';
 import { FeeType, getFeeTypeOptions } from '@/common/type/paymentFee/paymentFeeTypeEnum';
 import { updatePaymentFee } from '@/lib/paymentFee/updatePaymentFee';
