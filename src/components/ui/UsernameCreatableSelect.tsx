@@ -6,9 +6,15 @@ import { useUsers } from '@/hooks/fetchData/user/useUsers';
 import { SelectOptionType } from '@/components/input/SelectInput';
 import CreatableSelect from '@/components/input/CreatableSelect';
 
+interface UserData {
+  email: string;
+  displayName: string;
+  userId: number; // Tambahkan userId
+}
+
 interface UsernameCreatableSelectProps {
   value?: string;
-  onChange: (username: string, userData?: { email: string; displayName: string }) => void;
+  onChange: (username: string, userData?: UserData) => void;
   disabled?: boolean;
   onBlur?: () => void;
 }
@@ -28,7 +34,7 @@ function UsernameCreatableSelect({
     }
 
     const options: SelectOptionType[] = [];
-    const dataMap = new Map<string, { email: string; displayName: string }>();
+    const dataMap = new Map<string, UserData>();
 
     users.forEach((user) => {
       const displayName = (user as any).fullName || user.username;
@@ -36,7 +42,11 @@ function UsernameCreatableSelect({
         value: user.username,
         option: `${user.username}${user.email ? ` - ${user.email}` : ''}`,
       });
-      dataMap.set(user.username, { email: user.email, displayName });
+      dataMap.set(user.username, {
+        email: user.email,
+        displayName,
+        userId: user.id, // Simpan userId
+      });
     });
 
     return { userOptions: options, userDataMap: dataMap };
@@ -63,7 +73,7 @@ function UsernameCreatableSelect({
       <CreatableSelect
         label="Username"
         options={userOptions}
-        value={value} // Pass the value directly
+        value={value}
         onChange={(e) => handleChange(e.target.value)}
         disabled={disabled || loading}
         placeholder={
@@ -76,7 +86,7 @@ function UsernameCreatableSelect({
                 : 'Pilih user atau ketik username baru'
         }
         onCreateOption={handleCreateOption}
-        onBlur={onBlur} // Pass onBlur through
+        onBlur={onBlur}
       />
 
       {hasError && <div className="text-red-500 text-sm mt-1">Error: {error}</div>}

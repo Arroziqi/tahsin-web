@@ -55,7 +55,7 @@ function OfflineRegistrationPage() {
       email: '',
       fullName: '',
       motivation: '',
-      dateOfBirth: undefined,
+      dateOfBirth: '',
       noTelp: '',
       lastEducation: undefined,
       program: undefined,
@@ -66,6 +66,13 @@ function OfflineRegistrationPage() {
   });
 
   const selectedUserId = watch('userId');
+  const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
+
+  const handleReset = () => {
+    reset();
+    setAutoFilledFields(new Set());
+    refreshStudent();
+  };
 
   // Fetch active academic period on component mount
   useEffect(() => {
@@ -94,19 +101,83 @@ function OfflineRegistrationPage() {
     if (selectedUserId) {
       const student = students?.find((s) => s.userId === Number(selectedUserId));
       if (student) {
-        setValue('username', student.username);
-        setValue('email', student.email);
-        setValue('fullName', student.fullName || '');
-        setValue('motivation', student.motivation || '');
-        setValue('dateOfBirth', student.dateOfBirth ? new Date(student.dateOfBirth) : new Date());
-        setValue('noTelp', student.noTelp || '');
-        setValue('lastEducation', student.lastEducation as Education);
+        const newAutoFilledFields = new Set<string>();
 
-        // Trigger validation after setting values
+        setValue('username', student.username);
+        if (student.username) newAutoFilledFields.add('username');
+
+        setValue('email', student.email);
+        if (student.email) newAutoFilledFields.add('email');
+
+        setValue('fullName', student.fullName || '');
+        if (student.fullName) newAutoFilledFields.add('fullName');
+
+        setValue('motivation', student.motivation || '');
+        if (student.motivation) newAutoFilledFields.add('motivation');
+
+        if (student.dateOfBirth) {
+          const date = new Date(student.dateOfBirth);
+          const formattedDate = date.toISOString().split('T')[0];
+          setValue('dateOfBirth', formattedDate);
+          newAutoFilledFields.add('dateOfBirth');
+        } else {
+          setValue('dateOfBirth', '');
+        }
+
+        setValue('noTelp', student.noTelp || '');
+        if (student.noTelp) newAutoFilledFields.add('noTelp');
+
+        setValue('lastEducation', student.lastEducation as Education);
+        if (student.lastEducation) newAutoFilledFields.add('lastEducation');
+
+        setValue('userId', student.userId);
+        setValue('studentId', student.id);
+
+        setAutoFilledFields(newAutoFilledFields);
         trigger();
       }
     }
   }, [selectedUserId, students, setValue, trigger]);
+
+  // Handler untuk UsernameCreatableSelect
+  const handleUsernameChange = (
+    username: string,
+    userData?: { email: string; displayName: string; userId: number }
+  ) => {
+    const newAutoFilledFields = new Set<string>();
+
+    setValue('username', username, { shouldValidate: true });
+    if (username) newAutoFilledFields.add('username');
+
+    if (userData) {
+      setValue('email', userData.email, { shouldValidate: true });
+      if (userData.email) newAutoFilledFields.add('email');
+
+      setValue('fullName', userData.displayName, { shouldValidate: true });
+      if (userData.displayName) newAutoFilledFields.add('fullName');
+
+      setValue('userId', userData.userId, { shouldValidate: true });
+    } else {
+      setValue('email', '', { shouldValidate: true });
+      setValue('fullName', '', { shouldValidate: true });
+      setValue('userId', undefined, { shouldValidate: true });
+    }
+
+    setAutoFilledFields(newAutoFilledFields);
+  };
+
+  // Helper function untuk menentukan disabled state
+  const isFieldDisabled = (fieldName: string): boolean => {
+    // Jika memilih student, disable field yang sudah terisi
+    if (selectedUserId) {
+      return autoFilledFields.has(fieldName);
+    }
+    // Jika memilih username, disable field yang sudah terisi
+    if (watch('username') && autoFilledFields.has(fieldName)) {
+      return true;
+    }
+    return false;
+  };
 
   const handleFormSubmit = async (data: CreateEnrollmentRequest) => {
     setStudentsError(null);
@@ -171,17 +242,8 @@ function OfflineRegistrationPage() {
 
             <UsernameCreatableSelect
               value={watch('username') || ''}
-              onChange={(username, userData) => {
-                setValue('username', username, { shouldValidate: true });
-
-                if (userData) {
-                  setValue('email', userData.email, { shouldValidate: true });
-                  setValue('fullName', userData.displayName, { shouldValidate: true });
-                } else if (!watch('email')) {
-                  setValue('email', '', { shouldValidate: true });
-                }
-              }}
-              disabled={!!selectedUserId}
+              onChange={handleUsernameChange}
+              disabled={!!selectedUserId} // Tetap disabled jika sudah pilih student
               onBlur={() => trigger('username')}
             />
             {errors.username && (
@@ -202,7 +264,7 @@ function OfflineRegistrationPage() {
                 },
               })}
               error={errors.email?.message}
-              disabled={!!selectedUserId}
+              disabled={isFieldDisabled('email')} // Gunakan helper function
             />
 
             <TextInputWithLabelRHF
@@ -211,7 +273,6 @@ function OfflineRegistrationPage() {
               type={'text'}
               registration={register('fullName', { required: 'Nama lengkap wajib diisi' })}
               error={errors.fullName?.message}
-              disabled={!!selectedUserId}
             />
 
             {/* Note: You'll need to create a similar RHF version for TextAreaWithLabel */}
@@ -220,11 +281,8 @@ function OfflineRegistrationPage() {
               id={'motivation'}
               value={watch('motivation') || ''}
               onChange={(e) => setValue('motivation', e.target.value)}
-              disabled={!!selectedUserId}
+              disabled={isFieldDisabled('motivation')} // Gunakan helper function
             />
-            {errors.motivation && (
-              <p className="text-red-500 text-sm mt-1">{errors.motivation.message}</p>
-            )}
 
             <TextInputWithLabelRHF
               label={'Date of Birth'}
@@ -232,10 +290,9 @@ function OfflineRegistrationPage() {
               type={'date'}
               registration={register('dateOfBirth', {
                 required: 'Tanggal lahir wajib diisi',
-                valueAsDate: true,
               })}
               error={errors.dateOfBirth?.message}
-              disabled={!!selectedUserId}
+              disabled={isFieldDisabled('dateOfBirth')} // Gunakan helper function
             />
 
             <TextInputWithLabelRHF
@@ -244,15 +301,15 @@ function OfflineRegistrationPage() {
               type={'text'}
               registration={register('noTelp', { required: 'Nomor telepon wajib diisi' })}
               error={errors.noTelp?.message}
-              disabled={!!selectedUserId}
+              disabled={isFieldDisabled('noTelp')} // Gunakan helper function
             />
 
             <SelectInputWithLabel
               label={'Last Education'}
               options={enumToOptions(Education, 'Pilih pendidikan terakhir')}
               value={watch('lastEducation') || ''}
-              onChange={(e) => setValue('lastEducation', e.target.value as Education)} // Extract value
-              disabled={!!selectedUserId}
+              onChange={(e) => setValue('lastEducation', e.target.value as Education)}
+              disabled={isFieldDisabled('lastEducation')} // Gunakan helper function
             />
 
             <SelectInputWithLabel

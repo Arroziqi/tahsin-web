@@ -1,7 +1,7 @@
 export enum FeeType {
-  FULL_TUITION = 'full_tuition',
-  DOWN_PAYMENT = 'down_payment',
-  FINAL_INSTALLMENT = 'final_installment',
+  FULL_TUITION = 'FULL_TUITION',
+  DOWN_PAYMENT = 'DOWN_PAYMENT',
+  FINAL_INSTALLMENT = 'FINAL_INSTALLMENT',
 }
 
 export const getFeeTypeOptions = () => {

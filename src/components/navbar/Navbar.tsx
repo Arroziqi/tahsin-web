@@ -55,6 +55,10 @@ function Navbar() {
           text={'Pendaftaran Offline'}
           onClick={() => router.push('/dashboard/student-management/offline-registration')}
         />
+        <ItemNavbar
+          text={'Pembayaran Cash'}
+          onClick={() => router.push('/dashboard/student-management/cash-payment')}
+        />
       </div>
     </div>
   );

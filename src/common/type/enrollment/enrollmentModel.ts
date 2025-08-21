@@ -29,7 +29,7 @@ export type CreateEnrollmentRequest = {
   email: string;
   fullName: string;
   motivation: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   noTelp: string;
   lastEducation: Education;
   program: Program;
@@ -39,6 +39,7 @@ export type CreateEnrollmentRequest = {
   dateOfReservation?: Date;
   academicPeriodId: number;
   userId?: number;
+  studentId?: number;
   classId?: number | null;
 };
 
