@@ -228,6 +228,7 @@ export const API_ROUTES = {
     DELETE: (id: number) => `${API_BASE}/bill/delete/${id}`,
     GET_ALL: `${API_BASE}/bill/getAll`,
     GET_BY_ID: (id: number) => `${API_BASE}/bill/get/${id}`,
+    GET_BY_STUDENT_ID: (id: number) => `${API_BASE}/bill/get-by-student-id/${id}`,
   },
 
   ATTENDANCE: {

@@ -16,6 +16,9 @@ export interface TextInputWithLabelProps {
   validate?: (value: string) => string | null;
   disabled?: boolean;
   ref?: React.Ref<HTMLInputElement>; // Added ref prop
+  min?: number;
+  max?: number;
+  required?: boolean;
 }
 
 // Use forwardRef to support ref forwarding
@@ -34,6 +37,9 @@ const TextInputWithLabel = React.forwardRef<HTMLInputElement, TextInputWithLabel
       name,
       validate,
       disabled = false,
+      min,
+      max,
+      required = false,
     },
     ref
   ) {
@@ -52,6 +58,9 @@ const TextInputWithLabel = React.forwardRef<HTMLInputElement, TextInputWithLabel
           name={name}
           validate={validate}
           ref={ref} // Pass ref to TextInput
+          min={min}
+          max={max}
+          required={required}
         />
       </div>
     );

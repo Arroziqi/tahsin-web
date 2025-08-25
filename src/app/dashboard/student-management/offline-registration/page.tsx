@@ -23,6 +23,8 @@ import { getActiveAcademicPeriod } from '@/lib/academicPeriod/getActiveAcademicP
 import TextInputWithLabelRHF from '@/components/input/TextInputWithLableRHF';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import UsernameCreatableSelect from '@/components/ui/UsernameCreatableSelect';
+import StudentSelect from '@/components/ui/StudentSelect';
+import { StudentResponse } from '@/common/type/student/studentModel';
 
 function OfflineRegistrationPage() {
   const {
@@ -31,6 +33,7 @@ function OfflineRegistrationPage() {
     setError: setStudentsError,
     refresh: refreshStudent,
   } = useStudents();
+
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
   const [loading, setLoading] = useState(false);
@@ -139,6 +142,47 @@ function OfflineRegistrationPage() {
     }
   }, [selectedUserId, students, setValue, trigger]);
 
+  // Handler untuk StudentSelect ✅
+  const handleStudentSelect = (studentId: string, studentData?: StudentResponse) => {
+    if (studentId && studentData) {
+      const newAutoFilledFields = new Set<string>();
+
+      setValue('studentId', Number(studentId));
+      setValue('userId', studentData.userId);
+
+      setValue('username', studentData.username, { shouldValidate: true });
+      if (studentData.username) newAutoFilledFields.add('username');
+
+      setValue('email', studentData.email, { shouldValidate: true });
+      if (studentData.email) newAutoFilledFields.add('email');
+
+      setValue('fullName', studentData.fullName || '', { shouldValidate: true });
+      if (studentData.fullName) newAutoFilledFields.add('fullName');
+
+      setValue('motivation', studentData.motivation || '', { shouldValidate: true });
+      if (studentData.motivation) newAutoFilledFields.add('motivation');
+
+      if (studentData.dateOfBirth) {
+        const formattedDate = new Date(studentData.dateOfBirth).toISOString().split('T')[0];
+        setValue('dateOfBirth', formattedDate, { shouldValidate: true });
+        newAutoFilledFields.add('dateOfBirth');
+      }
+
+      setValue('noTelp', studentData.noTelp || '', { shouldValidate: true });
+      if (studentData.noTelp) newAutoFilledFields.add('noTelp');
+
+      setValue('lastEducation', studentData.lastEducation as Education, { shouldValidate: true });
+      if (studentData.lastEducation) newAutoFilledFields.add('lastEducation');
+
+      setAutoFilledFields(newAutoFilledFields);
+      trigger();
+    } else {
+      // reset jika kosong
+      setValue('studentId', undefined);
+      setValue('userId', undefined);
+    }
+  };
+
   // Handler untuk UsernameCreatableSelect
   const handleUsernameChange = (
     username: string,
@@ -166,16 +210,10 @@ function OfflineRegistrationPage() {
     setAutoFilledFields(newAutoFilledFields);
   };
 
-  // Helper function untuk menentukan disabled state
+  // Helper disable field
   const isFieldDisabled = (fieldName: string): boolean => {
-    // Jika memilih student, disable field yang sudah terisi
-    if (selectedUserId) {
-      return autoFilledFields.has(fieldName);
-    }
-    // Jika memilih username, disable field yang sudah terisi
-    if (watch('username') && autoFilledFields.has(fieldName)) {
-      return true;
-    }
+    if (selectedUserId && autoFilledFields.has(fieldName)) return true;
+    if (watch('username') && autoFilledFields.has(fieldName)) return true;
     return false;
   };
 
@@ -232,12 +270,13 @@ function OfflineRegistrationPage() {
           <TitlePage title="Pendaftaran Offline" />
 
           <form className={'flex flex-col gap-5'} onSubmit={handleSubmit(handleFormSubmit)}>
-            {/* Pilih Student */}
-            <SelectInputWithLabel
-              label={'Nama Siswa (User ID)'}
-              options={studentOptions}
-              value={watch('userId')?.toString() || ''}
-              onChange={(e) => setValue('userId', Number(e.target.value))}
+            {/* Pilih Student ✅ */}
+            <StudentSelect
+              value={watch('studentId')?.toString() || ''}
+              onChange={handleStudentSelect}
+              onBlur={() => trigger('studentId')}
+              label="Nama Siswa"
+              placeholder="Cari siswa berdasarkan nama atau ID..."
             />
 
             <UsernameCreatableSelect
