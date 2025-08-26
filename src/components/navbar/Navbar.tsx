@@ -56,8 +56,12 @@ function Navbar() {
           onClick={() => router.push('/dashboard/student-management/offline-registration')}
         />
         <ItemNavbar
-          text={'Pembayaran Cash'}
-          onClick={() => router.push('/dashboard/student-management/cash-payment')}
+          text={'Pembayaran'}
+          onClick={() => router.push('/dashboard/student-management/payment')}
+        />
+        <ItemNavbar
+          text={'Assessment'}
+          onClick={() => router.push('/dashboard/student-management/assessment')}
         />
       </div>
     </div>

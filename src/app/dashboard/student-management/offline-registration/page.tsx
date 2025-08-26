@@ -65,6 +65,7 @@ function OfflineRegistrationPage() {
       classType: undefined,
       timeOfStudy: undefined,
       academicPeriodId: undefined,
+      dateOfReservation: undefined,
     },
   });
 
@@ -245,13 +246,6 @@ function OfflineRegistrationPage() {
     }
   };
 
-  const studentOptions = [{ value: '', option: 'Pilih siswa' }].concat(
-    students?.map((s) => ({
-      value: s.userId.toString(),
-      option: `${s.fullName} (${s.userId})`,
-    })) || []
-  );
-
   const enumToOptions = (e: any, placeholder: string) =>
     [{ value: '', option: placeholder }].concat(
       Object.keys(e)
@@ -370,6 +364,16 @@ function OfflineRegistrationPage() {
               options={enumToOptions(TimeOfStudy, 'Pilih waktu belajar')}
               value={watch('timeOfStudy') || ''}
               onChange={(e) => setValue('timeOfStudy', e.target.value as TimeOfStudy)} // Extract value
+            />
+
+            <TextInputWithLabelRHF
+              label={'Tanggal Ujian (Reservasi)'}
+              id={'dateOfReservation'}
+              type={'date'}
+              registration={register('dateOfReservation', {
+                required: 'Tanggal ujian wajib diisi',
+              })}
+              error={errors.dateOfReservation?.message}
             />
 
             {/* Academic Period - Display as text but store ID */}

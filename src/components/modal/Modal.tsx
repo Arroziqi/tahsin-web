@@ -33,10 +33,11 @@ const Modal: React.FC<ModalProps> = ({
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div
-        className={`bg-white w-full ${sizeClasses[size]} rounded-lg shadow-lg overflow-visible pb-2`}
+        className={`bg-white w-full ${sizeClasses[size]} rounded-lg shadow-lg pb-2 max-h-[80vh] flex flex-col`}
         style={{ color: colors.C02 }}
       >
-        <div className="flex justify-between items-center px-6 pt-4">
+        {/* Header */}
+        <div className="flex justify-between items-center px-6 pt-4 flex-shrink-0">
           <h3 className="text-lg font-semibold">{title}</h3>
           {showCloseButton && (
             <button onClick={onClose} className="text-[#1D1B20] hover:text-black cursor-pointer">
@@ -45,9 +46,11 @@ const Modal: React.FC<ModalProps> = ({
           )}
         </div>
 
-        <div className="px-6 py-4">{children}</div>
+        {/* Body -> hanya bagian ini yang bisa scroll */}
+        <div className="px-6 py-4 overflow-y-auto flex-1">{children}</div>
 
-        {footer && <div className="px-6 py-3 bg-gray-50 text-right">{footer}</div>}
+        {/* Footer */}
+        {footer && <div className="px-6 py-3 bg-gray-50 text-right flex-shrink-0">{footer}</div>}
       </div>
     </div>,
     document.body

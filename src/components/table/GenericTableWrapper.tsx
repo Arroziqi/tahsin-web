@@ -18,7 +18,7 @@ interface GenericTableProps<T> {
   onStatusChange?: (index: number) => void;
   statusFieldName?: keyof T;
 
-  addDataComponent: React.ReactNode;
+  addDataComponent?: React.ReactNode;
 }
 
 function getNestedValue(obj: any, path: string) {

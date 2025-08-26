@@ -21,6 +21,7 @@ const ModalWithFormWrapper: React.FC<ModalWithFormWrapperProps> = ({
 }) => {
   return (
     <Modal
+      size={'xl'}
       isOpen={isOpen}
       onClose={onClose}
       title={title}
