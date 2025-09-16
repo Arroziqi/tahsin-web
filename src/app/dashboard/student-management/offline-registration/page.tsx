@@ -8,16 +8,10 @@ import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import PrimaryButton from '@/components/button/PrimaryButton';
 
 import { CreateEnrollmentRequest } from '@/common/type/enrollment/enrollmentModel';
-import {
-  ClassType,
-  Education,
-  Program,
-  TimeOfStudy,
-} from '@/common/type/enrollment/enrollmentEnum';
+import { ClassType, Education, Program } from '@/common/type/enrollment/enrollmentEnum';
 import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModal';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { addEnrollment } from '@/lib/enrollment/addEnrollment';
-import TextAreaWithLabel from '@/components/input/TextAreaWithLabel';
 import { useForm } from 'react-hook-form';
 import { getActiveAcademicPeriod } from '@/lib/academicPeriod/getActiveAcademicPeriod';
 import TextInputWithLabelRHF from '@/components/input/TextInputWithLableRHF';
@@ -25,6 +19,8 @@ import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import UsernameCreatableSelect from '@/components/ui/UsernameCreatableSelect';
 import StudentSelect from '@/components/ui/StudentSelect';
 import { StudentResponse } from '@/common/type/student/studentModel';
+import { useSchedules } from '@/hooks/fetchData/useSchedules';
+import TextAreaWithLabelRHF from '@/components/input/TextAreaWithLabelRHF';
 
 function OfflineRegistrationPage() {
   const {
@@ -33,6 +29,13 @@ function OfflineRegistrationPage() {
     setError: setStudentsError,
     refresh: refreshStudent,
   } = useStudents();
+
+  const {
+    data: timeOfStudies,
+    error: timeOfStudyError,
+    setError: setTimeOfStudyError,
+    refetch: refreshTimeOfStudy,
+  } = useSchedules();
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
@@ -63,7 +66,7 @@ function OfflineRegistrationPage() {
       lastEducation: undefined,
       program: undefined,
       classType: undefined,
-      timeOfStudy: undefined,
+      timeOfStudyId: undefined,
       academicPeriodId: undefined,
       dateOfReservation: undefined,
     },
@@ -71,12 +74,6 @@ function OfflineRegistrationPage() {
 
   const selectedUserId = watch('userId');
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
-
-  const handleReset = () => {
-    reset();
-    setAutoFilledFields(new Set());
-    refreshStudent();
-  };
 
   // Fetch active academic period on component mount
   useEffect(() => {
@@ -256,6 +253,14 @@ function OfflineRegistrationPage() {
         }))
     );
 
+  const timeOfStudiesToOptions = (studies: any[], placeholder: string) => [
+    { value: '', option: placeholder },
+    ...studies.map((s) => ({
+      value: s.id.toString(), // penting: select option harus string
+      option: `${s.flattenedDay} - ${s.flattenedSession} (${s.Time.startTime}–${s.Time.endTime})`,
+    })),
+  ];
+
   return (
     <div className="relative z-1 w-full flex justify-center items-center flex-col bg-white">
       <Topbar title="Pendaftaran Offline" />
@@ -301,20 +306,19 @@ function OfflineRegistrationPage() {
             />
 
             <TextInputWithLabelRHF
-              label={'Full Name'}
+              label={'Nama Lengkap'}
               id={'fullName'}
               type={'text'}
               registration={register('fullName', { required: 'Nama lengkap wajib diisi' })}
               error={errors.fullName?.message}
             />
 
-            {/* Note: You'll need to create a similar RHF version for TextAreaWithLabel */}
-            <TextAreaWithLabel
-              label={'Motivation'}
-              id={'motivation'}
-              value={watch('motivation') || ''}
-              onChange={(e) => setValue('motivation', e.target.value)}
-              disabled={isFieldDisabled('motivation')} // Gunakan helper function
+            <TextAreaWithLabelRHF
+              label="Motivasi"
+              placeholder="Tulis motivasi kamu…"
+              registration={register('motivation', { required: 'Motivasi wajib diisi' })}
+              error={errors.motivation?.message}
+              rows={4}
             />
 
             <TextInputWithLabelRHF
@@ -360,19 +364,17 @@ function OfflineRegistrationPage() {
             />
 
             <SelectInputWithLabel
-              label={'Waktu belajar'}
-              options={enumToOptions(TimeOfStudy, 'Pilih waktu belajar')}
-              value={watch('timeOfStudy') || ''}
-              onChange={(e) => setValue('timeOfStudy', e.target.value as TimeOfStudy)} // Extract value
+              label="Waktu belajar"
+              options={timeOfStudiesToOptions(timeOfStudies, 'Pilih waktu belajar')}
+              value={watch('timeOfStudyId')?.toString() || ''}
+              onChange={(e) => setValue('timeOfStudyId', Number(e.target.value))}
             />
 
             <TextInputWithLabelRHF
               label={'Tanggal Ujian (Reservasi)'}
               id={'dateOfReservation'}
               type={'date'}
-              registration={register('dateOfReservation', {
-                required: 'Tanggal ujian wajib diisi',
-              })}
+              registration={register('dateOfReservation')}
               error={errors.dateOfReservation?.message}
             />
 

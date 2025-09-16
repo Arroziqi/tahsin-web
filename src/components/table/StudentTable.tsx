@@ -1,37 +1,55 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ColumnDefinition } from '@/components/table/RichTable';
 import GenericTableWrapper from '@/components/table/GenericTableWrapper';
 import { Pencil } from 'lucide-react';
 import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModal';
 import { format } from 'date-fns';
-import { EnrollmentResponse } from '@/common/type/enrollment/enrollmentModel';
-import EditEnrollmentModal from '@/components/modal/enrollment/EditEnrollmentModal';
+import { StudentResponse } from '@/common/type/student/studentModel';
+import EditStudentModal from '@/components/modal/student/EditStudentModal';
+import useLevels, { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
 
-interface EnrollmentTableProps {
-  dataFetched: EnrollmentResponse[];
+interface StudentTableProps {
+  dataFetched: StudentResponse[];
   loading?: boolean;
   error?: string | null;
-  refreshEnrollments?: () => void;
+  refreshStudents?: () => void;
 }
 
-function EnrollmentTable({
+function StudentTable({
   dataFetched = [],
   loading = false,
   error = null,
-  refreshEnrollments,
-}: EnrollmentTableProps) {
-  const [editingData, setEditingData] = useState<EnrollmentResponse | null>(null);
+  refreshStudents,
+}: StudentTableProps) {
+  const [editingData, setEditingData] = useState<StudentResponse | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
 
-  const columns: ColumnDefinition<EnrollmentResponse>[] = [
+  // ambil data level
+  const { data: levels, loading: levelLoading } = useLevels();
+
+  // bikin map id → level name biar gampang lookup
+  const levelMap = useMemo(() => {
+    const map: Record<number, string> = {};
+    (levels || []).forEach((lvl: LevelResponseDataType) => {
+      map[lvl.id] = lvl.level;
+    });
+    return map;
+  }, [levels]);
+
+  const columns: ColumnDefinition<StudentResponse>[] = [
     {
       key: 'fullName',
       label: 'Nama Siswa',
       render: (_, row) => row.fullName,
       className: 'rounded-tl-lg',
+    },
+    {
+      key: 'username',
+      label: 'Username',
+      render: (_, row) => row.username,
     },
     {
       key: 'email',
@@ -41,7 +59,7 @@ function EnrollmentTable({
     {
       key: 'noTelp',
       label: 'No. Telp',
-      render: (_, row) => row.noTelp,
+      render: (_, row) => row.noTelp ?? '-',
     },
     {
       key: 'lastEducation',
@@ -49,35 +67,25 @@ function EnrollmentTable({
       render: (_, row) => row.lastEducation ?? '-',
     },
     {
-      key: 'program',
-      label: 'Program',
-      render: (_, row) => row.program,
+      key: 'motivation',
+      label: 'Motivasi',
+      render: (_, row) => row.motivation ?? '-',
     },
     {
-      key: 'classType',
-      label: 'Jenis Kelas',
-      render: (_, row) => row.classType,
+      key: 'levelId',
+      label: 'Level',
+      render: (_, row) => (levelLoading ? 'Loading...' : (levelMap[row.levelId ?? -1] ?? '-')),
     },
     {
-      key: 'timeOfStudy',
-      label: 'Waktu Belajar',
-      render: (_, row) => {
-        const day = row.Schedule?.day ?? '';
-        const session = row.Schedule?.session ?? '';
-        return [day, session].filter(Boolean).join(' - ');
-      },
+      key: 'studentStatus',
+      label: 'Status',
+      render: (_, row) => row.studentStatus,
     },
     {
       key: 'dateOfBirth',
       label: 'Tanggal Lahir',
       render: (_, row) =>
         row.dateOfBirth ? format(new Date(row.dateOfBirth), 'dd MMM yyyy') : '-',
-    },
-    {
-      key: 'dateOfReservation',
-      label: 'Tanggal Reservasi',
-      render: (_, row) =>
-        row.dateOfReservation ? format(new Date(row.dateOfReservation), 'dd MMM yyyy') : '-',
     },
     {
       key: 'actions',
@@ -99,28 +107,27 @@ function EnrollmentTable({
 
   return (
     <>
-      <GenericTableWrapper<EnrollmentResponse>
+      <GenericTableWrapper<StudentResponse>
         dataFetched={dataFetched}
         columns={columns}
         searchableFields={[
           'fullName',
+          'username',
           'email',
           'noTelp',
           'lastEducation',
-          'program',
-          'classType',
-          'timeOfStudy',
-          'dateOfReservation',
+          'motivation',
+          'studentStatus',
         ]}
         loading={loading}
         error={error}
       />
 
       {editingData && (
-        <EditEnrollmentModal
+        <EditStudentModal
           initialData={editingData}
           onClose={() => setEditingData(null)}
-          refreshEnrollments={refreshEnrollments}
+          refreshStudents={refreshStudents}
           onSuccess={(msg) => {
             setSuccessMessage(msg);
             setShowSuccess(true);
@@ -138,4 +145,4 @@ function EnrollmentTable({
   );
 }
 
-export default EnrollmentTable;
+export default StudentTable;

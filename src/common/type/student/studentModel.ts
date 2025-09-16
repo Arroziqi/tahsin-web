@@ -33,7 +33,7 @@ export type CreateStudentRequest = {
 
 export type UpdateStudentRequest = {
   id: number;
-  fullName: string;
+  fullName?: string;
   dateOfBirth?: Date | null;
   noTelp?: string | null;
   lastEducation?: Education | null;

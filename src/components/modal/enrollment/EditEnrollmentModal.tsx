@@ -1,22 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { BaseSyntheticEvent, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import {
   EnrollmentResponse,
   UpdateEnrollmentRequest,
 } from '@/common/type/enrollment/enrollmentModel';
-import {
-  ClassType,
-  Education,
-  Program,
-  TimeOfStudy,
-} from '@/common/type/enrollment/enrollmentEnum';
-
-// import { updateEnrollment } from '@/services/enrollmentService'; // asumsi ada service
+import { ClassType, Education, Program } from '@/common/type/enrollment/enrollmentEnum';
+import { updateEnrollment } from '@/lib/enrollment/updateEnrollment';
+import { useSchedules } from '@/hooks/fetchData/useSchedules';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import TextInputWithLabelRHF from '@/components/input/TextInputWithLableRHF';
+import TextAreaWithLabelRHF from '@/components/input/TextAreaWithLabelRHF';
+import { DateHandler } from '@/common/helper/dateHandler';
 
 interface EditEnrollmentModalProps {
   initialData: EnrollmentResponse;
@@ -33,85 +31,76 @@ function EditEnrollmentModal({
 }: EditEnrollmentModalProps) {
   const [open, setOpen] = useState(true);
 
-  // state untuk field enrollment
-  const [fullName, setFullName] = useState(initialData.fullName);
-  const [email, setEmail] = useState(initialData.email);
-  const [noTelp, setNoTelp] = useState(initialData.noTelp);
-  const [dateOfBirth, setDateOfBirth] = useState(
-    initialData.dateOfBirth ? new Date(initialData.dateOfBirth).toISOString().split('T')[0] : ''
-  );
-  const [lastEducation, setLastEducation] = useState<Education>(initialData.lastEducation);
-  const [program, setProgram] = useState<Program>(initialData.program);
-  const [classType, setClassType] = useState<ClassType>(initialData.classType);
-  const [timeOfStudy, setTimeOfStudy] = useState<TimeOfStudy>(initialData.timeOfStudy);
-  const [motivation, setMotivation] = useState(initialData.motivation || '');
-  const [dateOfReservation, setDateOfReservation] = useState(
-    initialData.dateOfReservation
-      ? new Date(initialData.dateOfReservation).toISOString().split('T')[0]
-      : ''
-  );
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setFullName(initialData.fullName);
-    setEmail(initialData.email);
-    setNoTelp(initialData.noTelp);
-    setDateOfBirth(
-      initialData.dateOfBirth ? new Date(initialData.dateOfBirth).toISOString().split('T')[0] : ''
-    );
-    setLastEducation(initialData.lastEducation);
-    setProgram(initialData.program);
-    setClassType(initialData.classType);
-    setTimeOfStudy(initialData.timeOfStudy);
-    setMotivation(initialData.motivation || '');
-    setDateOfReservation(
-      initialData.dateOfReservation
-        ? new Date(initialData.dateOfReservation).toISOString().split('T')[0]
-        : ''
-    );
-  }, [initialData]);
+  const {
+    data: timeOfStudies,
+    error: timeOfStudyError,
+    setError: setTimeOfStudyError,
+    refetch: refreshTimeOfStudy,
+  } = useSchedules();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const timeOfStudiesToOptions = (studies: any[], placeholder: string) => [
+    { value: '', option: placeholder },
+    ...studies.map((s) => ({
+      value: s.id.toString(),
+      option: `${s.flattenedDay} - ${s.flattenedSession} (${s.Time.startTime}–${s.Time.endTime})`,
+    })),
+  ];
+
+  const enumToOptions = (e: any, placeholder: string) =>
+    [{ value: '', option: placeholder }].concat(
+      Object.keys(e)
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
+          value: key,
+          option: key,
+        }))
+    );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+    trigger,
+    watch,
+    setValue,
+  } = useForm<UpdateEnrollmentRequest>({
+    mode: 'onChange',
+    defaultValues: {
+      ...initialData,
+      dateOfBirth: DateHandler.formatDateForInput(initialData.dateOfBirth),
+      dateOfReservation: DateHandler.formatDateForInput(initialData.dateOfReservation),
+    },
+  });
+
+  const onSubmit: SubmitHandler<UpdateEnrollmentRequest> = async (
+    payload,
+    e?: BaseSyntheticEvent
+  ) => {
+    e?.preventDefault();
     setError(null);
 
     try {
       setLoading(true);
 
-      const payload: UpdateEnrollmentRequest = {
-        id: initialData.id,
-        username: email, // asumsi username = email
-        email,
-        fullName,
-        motivation,
-        dateOfBirth: new Date(dateOfBirth),
-        noTelp,
-        lastEducation,
-        program,
-        classType,
-        timeOfStudy,
-        voiceRecording: initialData.voiceRecording,
-        dateOfReservation: dateOfReservation ? new Date(dateOfReservation) : undefined,
-        academicPeriodId: initialData.academicPeriodId,
-        userId: initialData.userId,
-        classId: initialData.classId,
-      };
+      const response = await updateEnrollment(payload);
 
-      // const response = await updateEnrollment(payload);
-
-      // if (response) {
-      refreshEnrollments?.();
-      onSuccess?.({
-        title: 'Pendaftaran Berhasil Diperbarui',
-        description: 'Data pendaftaran berhasil diperbarui',
-      });
-      setOpen(false);
-      onClose?.();
-      // }
+      if (response) {
+        refreshEnrollments?.();
+        onSuccess?.({
+          title: 'Pendaftaran Berhasil Diperbarui',
+          description: 'Data pendaftaran berhasil diperbarui',
+        });
+        reset();
+        setOpen(false);
+        onClose?.();
+      }
     } catch (err) {
       const handled = handleApiError(err);
+      console.log(err);
       setError(handled.message);
     } finally {
       setLoading(false);
@@ -125,96 +114,93 @@ function EditEnrollmentModal({
         setOpen(false);
         onClose?.();
       }}
-      onSubmit={handleSubmit}
+      onSubmit={undefined as any}
+      formId="edit-enrollment-form"
       title="Edit Pendaftaran"
     >
-      <div className="space-y-4 mt-4">
-        <TextInputWithLabel
-          label="Nama Lengkap"
-          id="fullName"
-          type="text"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+      <form id="edit-enrollment-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+        <TextInputWithLabelRHF
+          label={'Nama Lengkap'}
+          id={'fullName'}
+          type={'text'}
+          registration={register('fullName', { required: 'Nama lengkap wajib diisi' })}
+          error={errors.fullName?.message}
         />
 
-        <TextInputWithLabel
-          label="Email"
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+        <TextInputWithLabelRHF
+          label={'Email'}
+          id={'email'}
+          type={'email'}
+          registration={register('email', {
+            required: 'Email wajib diisi',
+            pattern: {
+              value: /^\S+@\S+$/i,
+              message: 'Format email tidak valid',
+            },
+          })}
+          error={errors.email?.message}
         />
 
-        <TextInputWithLabel
-          label="No. Telepon"
-          id="noTelp"
-          type="text"
-          value={noTelp}
-          onChange={(e) => setNoTelp(e.target.value)}
+        <TextInputWithLabelRHF
+          label={'No Telp'}
+          id={'noTelp'}
+          type={'text'}
+          registration={register('noTelp', { required: 'Nomor telepon wajib diisi' })}
+          error={errors.noTelp?.message}
         />
 
-        <TextInputWithLabel
-          label="Tanggal Lahir"
-          id="dateOfBirth"
-          type="date"
-          value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
-        />
-
-        <SelectInputWithLabel
-          label="Pendidikan Terakhir"
-          value={lastEducation}
-          onChange={(e) => setLastEducation(e.target.value as Education)}
-          options={Object.values(Education).map((edu) => ({
-            option: edu,
-            value: edu,
-          }))}
-        />
-
-        <SelectInputWithLabel
-          label="Program"
-          value={program}
-          onChange={(e) => setProgram(e.target.value as Program)}
-          options={Object.values(Program).map((p) => ({
-            option: p,
-            value: p,
-          }))}
+        <TextInputWithLabelRHF
+          label={'Date of Birth'}
+          id={'dateOfBirth'}
+          type={'date'}
+          registration={register('dateOfBirth', {
+            required: 'Tanggal lahir wajib diisi',
+          })}
+          error={errors.dateOfBirth?.message}
         />
 
         <SelectInputWithLabel
-          label="Jenis Kelas"
-          value={classType}
-          onChange={(e) => setClassType(e.target.value as ClassType)}
-          options={Object.values(ClassType).map((c) => ({
-            option: c,
-            value: c,
-          }))}
+          label={'Pendidikan Terakhir'}
+          options={enumToOptions(Education, 'Pilih pendidikan terakhir')}
+          value={watch('lastEducation') || ''}
+          onChange={(e) => setValue('lastEducation', e.target.value as Education)}
         />
 
         <SelectInputWithLabel
-          label="Waktu Belajar"
-          value={timeOfStudy}
-          onChange={(e) => setTimeOfStudy(e.target.value as TimeOfStudy)}
-          options={Object.values(TimeOfStudy).map((t) => ({
-            option: t,
-            value: t,
-          }))}
+          label={'Program'}
+          options={enumToOptions(Program, 'Pilih program')}
+          value={watch('program') || ''}
+          onChange={(e) => setValue('program', e.target.value as Program)} // Extract value
         />
 
-        <TextInputWithLabel
+        <SelectInputWithLabel
+          label={'Jenis Kelas'}
+          options={enumToOptions(ClassType, 'Pilih jenis kelas')}
+          value={watch('classType') || ''}
+          onChange={(e) => setValue('classType', e.target.value as ClassType)} // Extract value
+        />
+
+        <SelectInputWithLabel
+          label="Waktu belajar"
+          options={timeOfStudiesToOptions(timeOfStudies, 'Pilih waktu belajar')}
+          value={watch('timeOfStudyId')?.toString() || ''}
+          onChange={(e) => setValue('timeOfStudyId', Number(e.target.value))}
+        />
+
+        <TextAreaWithLabelRHF
           label="Motivasi"
-          id="motivation"
-          type="text"
-          value={motivation}
-          onChange={(e) => setMotivation(e.target.value)}
+          placeholder="Tulis motivasi kamu…"
+          registration={register('motivation', { required: 'Motivasi wajib diisi' })}
+          error={errors.motivation?.message}
+          rows={4}
         />
 
-        <TextInputWithLabel
-          label="Tanggal Reservasi (opsional)"
-          id="dateOfReservation"
-          type="date"
-          value={dateOfReservation}
-          onChange={(e) => setDateOfReservation(e.target.value)}
+        <TextInputWithLabelRHF
+          label={'Tanggal Ujian (Reservasi)'}
+          id={'dateOfReservation'}
+          type={'date'}
+          registration={register('dateOfReservation')}
+          error={errors.dateOfReservation?.message}
         />
 
         {error && (
@@ -222,7 +208,7 @@ function EditEnrollmentModal({
             <p className="text-red-500 text-sm">{error}</p>
           </div>
         )}
-      </div>
+      </form>
     </ModalWithForm>
   );
 }

@@ -1,27 +1,25 @@
-import {
-  ClassType,
-  Education,
-  Program,
-  TimeOfStudy,
-} from '@/common/type/enrollment/enrollmentEnum';
+import { ClassType, Education, Program } from '@/common/type/enrollment/enrollmentEnum';
+import { ScheduleResponseShort } from '@/common/type/schedule/scheduleModel';
 
 export type EnrollmentResponse = {
   id: number;
   email: string;
   fullName: string;
   motivation: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   noTelp: string;
   lastEducation: Education;
   program: Program;
   classType: ClassType;
-  timeOfStudy: TimeOfStudy;
+  timeOfStudyId: number;
   voiceRecording?: string;
   dateOfReservation?: Date;
   academicPeriodId: number;
   userId?: number;
   classId?: number | null;
   createdBy: number | null;
+
+  Schedule?: ScheduleResponseShort;
 };
 
 export type CreateEnrollmentRequest = {
@@ -34,7 +32,7 @@ export type CreateEnrollmentRequest = {
   lastEducation: Education;
   program: Program;
   classType: ClassType;
-  timeOfStudy: TimeOfStudy;
+  timeOfStudyId: number;
   voiceRecording?: string;
   dateOfReservation?: Date;
   academicPeriodId: number;
@@ -48,12 +46,12 @@ export type RegisterEnrollmentRequest = {
   email: string;
   fullName: string;
   motivation: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   noTelp: string;
   lastEducation: Education;
   program: Program;
   classType: ClassType;
-  timeOfStudy: TimeOfStudy;
+  timeOfStudyId: number;
   voiceRecording?: string;
   dateOfReservation?: Date;
   academicPeriodId: number;
@@ -63,18 +61,18 @@ export type RegisterEnrollmentRequest = {
 
 export type UpdateEnrollmentRequest = {
   id: number;
-  username: string;
+  // username: string;
   email: string;
   fullName: string;
   motivation: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   noTelp: string;
   lastEducation: Education;
   program: Program;
   classType: ClassType;
-  timeOfStudy: TimeOfStudy;
+  timeOfStudyId: number;
   voiceRecording?: string;
-  dateOfReservation?: Date;
+  dateOfReservation?: Date | string;
   academicPeriodId: number;
   userId?: number;
   classId?: number | null;
