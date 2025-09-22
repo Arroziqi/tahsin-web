@@ -91,7 +91,7 @@ src/
 
 ## 🔗 Repositori Terkait
 
-* [Tahsin App – Server API](https://github.com/username/tahsin-app-server)
+* [Tahsin App – Server API](https://github.com/Arroziqi/tahsin-app-server-monolith.git)
 * [Tahsin App – Mobile](https://github.com/Arroziqi/tahsin-mobile.git)
 
 ---
