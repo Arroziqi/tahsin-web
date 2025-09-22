@@ -1,4 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tahsin App
+
+## About the Project
+
+**Tahsin App** adalah aplikasi berbasis multi platform (web dan mobile) yang dirancang untuk membantu pengelolaan kegiatan pembelajaran *tahsin* (perbaikan bacaan Al-Qur’an).
+Aplikasi ini memudahkan administrasi dan manajemen kelas bagi lembaga, guru, maupun peserta.
+
+### Fitur Utama
+- **Manajemen Jadwal Kelas**
+  Membuat, memperbarui, dan memantau jadwal tahsin sesuai level, guru, dan kapasitas.
+- **Manajemen Peserta**
+  Menambahkan, memperbarui, serta memantau data santri/peserta program tahsin.
+- **Monitoring Perkembangan**
+  Melihat progres bacaan dan catatan evaluasi peserta.
+- **Pengelolaan Guru / Ustadz**
+  Menyimpan data guru, mengatur jadwal mengajar, dan memantau kinerja.
+- **Pengelolaan Level & Materi**
+  Menetapkan level bacaan, kurikulum, dan target capaian tiap tingkatan.
+
+### Tujuan
+Tahsin App bertujuan mendigitalisasi proses administrasi dan pembelajaran Al-Qur’an, sehingga guru dan peserta bisa lebih fokus pada peningkatan kualitas bacaan.
+
+---
+
 
 ## Getting Started
 

@@ -1,28 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import API from '@/lib/utils/axios';
-
-export interface ScheduleResponseDataType {
-  id: number;
-  dayId: number;
-  timeId: number;
-  classType: 'ONLINE' | 'OFFLINE';
-  isActive: boolean;
-  createdBy: number | null;
-  Day?: {
-    id: number;
-    day: string;
-    isActive: boolean;
-  };
-  Time?: {
-    id: number;
-    session: string;
-    startTime: string;
-    endTime: string;
-    isActive: boolean;
-  };
-  flattenedDay?: string;
-  flattenedSession?: string;
-}
+import { ScheduleResponseDataType } from '@/common/type/schedule/scheduleModel';
 
 export function useSchedules() {
   const [data, setData] = useState<ScheduleResponseDataType[]>([]);
@@ -40,7 +18,6 @@ export function useSchedules() {
 
       const rawData = response.data.data;
 
-      // ⬇️ Tambahkan flattened field untuk kebutuhan sort & filter
       const transformed = rawData.map((item) => ({
         ...item,
         flattenedDay: item.Day?.day || '',

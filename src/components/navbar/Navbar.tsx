@@ -9,11 +9,11 @@ function Navbar() {
   const router = useRouter();
   return (
     <div
-      className={`flex flex-col gap-4 items-center w-[320px] h-screen py-5 px-6`}
+      className={`flex flex-col gap-4 items-center w-[320px] h-screen py-5`}
       style={{ backgroundColor: colors.C02 }}
     >
-      <LogoNavbar className={`mb-8`} />
-      <div className="w-full gap-2 flex flex-col">
+      <LogoNavbar className={`mb-8 px-6`} />
+      <div className="w-full gap-2 flex flex-col px-6 pb-5 overflow-y-auto hide-scrollbar">
         <TextSectionNavbar text={`KELOLA PENGAJAR`} />
         <ItemNavbar
           text={'Tambah Pengajar'}
@@ -62,6 +62,10 @@ function Navbar() {
         <ItemNavbar
           text={'Assessment'}
           onClick={() => router.push('/dashboard/student-management/assessment')}
+        />
+        <ItemNavbar
+          text={'Jadwal Kelas'}
+          onClick={() => router.push('/dashboard/student-management/class-schedule')}
         />
       </div>
     </div>

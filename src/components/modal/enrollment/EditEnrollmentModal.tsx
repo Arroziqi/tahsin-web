@@ -10,7 +10,7 @@ import {
 } from '@/common/type/enrollment/enrollmentModel';
 import { ClassType, Education, Program } from '@/common/type/enrollment/enrollmentEnum';
 import { updateEnrollment } from '@/lib/enrollment/updateEnrollment';
-import { useSchedules } from '@/hooks/fetchData/useSchedules';
+import { useSchedules } from '@/hooks/fetchData/schedule/useSchedules';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import TextInputWithLabelRHF from '@/components/input/TextInputWithLableRHF';
 import TextAreaWithLabelRHF from '@/components/input/TextAreaWithLabelRHF';

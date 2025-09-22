@@ -19,33 +19,12 @@ import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import UsernameCreatableSelect from '@/components/ui/UsernameCreatableSelect';
 import StudentSelect from '@/components/ui/StudentSelect';
 import { StudentResponse } from '@/common/type/student/studentModel';
-import { useSchedules } from '@/hooks/fetchData/useSchedules';
 import TextAreaWithLabelRHF from '@/components/input/TextAreaWithLabelRHF';
+import { SelectOptions } from '@/common/helper/selectOptions';
+import { SelectOptionType } from '@/components/input/SelectInput';
+import { useSchedulesByClassType } from '@/hooks/fetchData/schedule/useSchedulesByClassType';
 
 function OfflineRegistrationPage() {
-  const {
-    data: students,
-    error: studentsError,
-    setError: setStudentsError,
-    refresh: refreshStudent,
-  } = useStudents();
-
-  const {
-    data: timeOfStudies,
-    error: timeOfStudyError,
-    setError: setTimeOfStudyError,
-    refetch: refreshTimeOfStudy,
-  } = useSchedules();
-
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
-  const [loading, setLoading] = useState(false);
-  const [activeAcademicPeriod, setActiveAcademicPeriod] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
-  const [academicPeriodLoading, setAcademicPeriodLoading] = useState(true);
-
   const {
     register,
     handleSubmit,
@@ -71,6 +50,30 @@ function OfflineRegistrationPage() {
       dateOfReservation: undefined,
     },
   });
+
+  const {
+    data: students,
+    error: studentsError,
+    setError: setStudentsError,
+    refresh: refreshStudent,
+  } = useStudents();
+
+  const classType = watch('classType');
+  const {
+    data: timeOfStudies,
+    loading: schedulesLoading,
+    error: schedulesError,
+    refetch: refetchSchedules,
+  } = useSchedulesByClassType(classType);
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState({ title: '', description: '' });
+  const [loading, setLoading] = useState(false);
+  const [activeAcademicPeriod, setActiveAcademicPeriod] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+  const [academicPeriodLoading, setAcademicPeriodLoading] = useState(true);
 
   const selectedUserId = watch('userId');
   const [autoFilledFields, setAutoFilledFields] = useState<Set<string>>(new Set());
@@ -243,23 +246,12 @@ function OfflineRegistrationPage() {
     }
   };
 
-  const enumToOptions = (e: any, placeholder: string) =>
-    [{ value: '', option: placeholder }].concat(
-      Object.keys(e)
-        .filter((key) => isNaN(Number(key)))
-        .map((key) => ({
-          value: key,
-          option: key,
-        }))
-    );
-
-  const timeOfStudiesToOptions = (studies: any[], placeholder: string) => [
-    { value: '', option: placeholder },
-    ...studies.map((s) => ({
-      value: s.id.toString(), // penting: select option harus string
-      option: `${s.flattenedDay} - ${s.flattenedSession} (${s.Time.startTime}–${s.Time.endTime})`,
-    })),
-  ];
+  const timeOfStudyOptions: SelectOptionType[] = SelectOptions.fromCollection(
+    timeOfStudies,
+    'Pilih Waktu Studi',
+    (s) => s.id,
+    (s) => `${s.flattenedDay} - ${s.flattenedSession} (${s.Time!.startTime}–${s.Time!.endTime})`
+  );
 
   return (
     <div className="relative z-1 w-full flex justify-center items-center flex-col bg-white">
@@ -343,7 +335,7 @@ function OfflineRegistrationPage() {
 
             <SelectInputWithLabel
               label={'Last Education'}
-              options={enumToOptions(Education, 'Pilih pendidikan terakhir')}
+              options={SelectOptions.fromEnum(Education, 'Pilih pendidikan terakhir')}
               value={watch('lastEducation') || ''}
               onChange={(e) => setValue('lastEducation', e.target.value as Education)}
               disabled={isFieldDisabled('lastEducation')} // Gunakan helper function
@@ -351,21 +343,21 @@ function OfflineRegistrationPage() {
 
             <SelectInputWithLabel
               label={'Program'}
-              options={enumToOptions(Program, 'Pilih program')}
+              options={SelectOptions.fromEnum(Program, 'Pilih program')}
               value={watch('program') || ''}
               onChange={(e) => setValue('program', e.target.value as Program)} // Extract value
             />
 
             <SelectInputWithLabel
               label={'Jenis Kelas'}
-              options={enumToOptions(ClassType, 'Pilih jenis kelas')}
+              options={SelectOptions.fromEnum(ClassType, 'Pilih jenis kelas')}
               value={watch('classType') || ''}
               onChange={(e) => setValue('classType', e.target.value as ClassType)} // Extract value
             />
 
             <SelectInputWithLabel
               label="Waktu belajar"
-              options={timeOfStudiesToOptions(timeOfStudies, 'Pilih waktu belajar')}
+              options={timeOfStudyOptions}
               value={watch('timeOfStudyId')?.toString() || ''}
               onChange={(e) => setValue('timeOfStudyId', Number(e.target.value))}
             />

@@ -8,7 +8,7 @@ import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModa
 import { format } from 'date-fns';
 import { StudentResponse } from '@/common/type/student/studentModel';
 import EditStudentModal from '@/components/modal/student/EditStudentModal';
-import useLevels, { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
+import useLevels, { LevelResponseDataType } from '@/hooks/fetchData/level/useLevels';
 
 interface StudentTableProps {
   dataFetched: StudentResponse[];

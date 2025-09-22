@@ -8,7 +8,7 @@ import { handleApiError } from '@/lib/utils/errorHandler';
 import { Education } from '@/common/type/enrollment/enrollmentEnum';
 import { StudentResponse, UpdateStudentRequest } from '@/common/type/student/studentModel';
 import { StudentStatusEnum } from '@/common/type/student/studentEnum';
-import useLevels, { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
+import useLevels, { LevelResponseDataType } from '@/hooks/fetchData/level/useLevels';
 import { updateStudent } from '@/lib/student/updateStudent';
 
 interface EditStudentModalProps {
@@ -141,18 +141,22 @@ function EditStudentModal({
 
         <SelectInputWithLabel
           label="Level"
-          value={levelId?.toString() ?? ''}
-          onChange={(e) => setLevelId(e.target.value ? Number(e.target.value) : null)}
-          options={
-            levelLoading
+          value={levelId !== null ? levelId.toString() : ''} // kosong kalau belum ada
+          onChange={(e) => {
+            const val = e.target.value;
+            setLevelId(val ? Number(val) : null);
+          }}
+          options={[
+            { option: 'Pilih Level', value: '' }, // <-- placeholder
+            ...(levelLoading
               ? [{ option: 'Loading...', value: '' }]
               : levelError
                 ? [{ option: 'Error memuat level', value: '' }]
                 : levels.map((lvl: LevelResponseDataType) => ({
                     option: lvl.level,
-                    value: lvl.id.toString(), // 👈 pastikan value string
-                  }))
-          }
+                    value: lvl.id.toString(),
+                  }))),
+          ]}
         />
 
         <SelectInputWithLabel

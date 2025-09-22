@@ -1,4 +1,5 @@
 import API from '@/lib/utils/axios';
+import { API_ROUTES } from '@/common/const/route';
 
 export async function updateSchedule({
   id,
@@ -13,7 +14,7 @@ export async function updateSchedule({
   classType?: 'ONLINE' | 'OFFLINE';
   isActive?: boolean;
 }): Promise<boolean> {
-  const response = await API.patch('/admin/api/schedule/update', {
+  const response = await API.patch(API_ROUTES.SCHEDULE.UPDATE, {
     id,
     dayId,
     timeId,

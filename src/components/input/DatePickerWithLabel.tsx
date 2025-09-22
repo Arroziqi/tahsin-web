@@ -5,9 +5,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import colors from '@/constants/colors';
 
-interface DatePickerWithLabelProps {
+export interface DatePickerWithLabelProps {
   id: string;
-  label?: string;
+  label: string;
   selectedDate?: Date;
   onChange: (date: Date | null) => void;
   required?: boolean;

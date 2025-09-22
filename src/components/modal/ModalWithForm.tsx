@@ -9,6 +9,7 @@ interface ModalWithFormWrapperProps {
   title: string;
   formId?: string;
   children: React.ReactNode;
+  submitting?: boolean;
 }
 
 const ModalWithFormWrapper: React.FC<ModalWithFormWrapperProps> = ({
@@ -18,6 +19,7 @@ const ModalWithFormWrapper: React.FC<ModalWithFormWrapperProps> = ({
   title,
   formId = 'default-form',
   children,
+  submitting = false,
 }) => {
   return (
     <Modal
@@ -30,6 +32,7 @@ const ModalWithFormWrapper: React.FC<ModalWithFormWrapperProps> = ({
           <button
             onClick={onClose}
             className="px-4 py-2 border rounded-lg mr-2 text-gray-700 cursor-pointer"
+            disabled={submitting}
           >
             Batal
           </button>
@@ -37,10 +40,11 @@ const ModalWithFormWrapper: React.FC<ModalWithFormWrapperProps> = ({
             type="submit"
             form={formId}
             onClick={onSubmit}
+            disabled={submitting}
             className="px-4 py-2 hover:opacity-90 text-white rounded-lg cursor-pointer"
             style={{ backgroundColor: colors.C06 }}
           >
-            Simpan
+            {submitting ? 'Menyimpan…' : 'Simpan'}
           </button>
         </>
       }

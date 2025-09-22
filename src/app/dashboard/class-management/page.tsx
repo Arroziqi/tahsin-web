@@ -7,7 +7,7 @@ import TabBar, { TabBarItemProps } from '@/components/button/TabBar';
 import LevelTable from '@/components/table/LevelTable';
 import Spinner from '@/components/alert/Spinner';
 import ErrorAlert from '@/components/alert/ErrorAlert';
-import useLevels from '@/hooks/fetchData/useLevels';
+import useLevels from '@/hooks/fetchData/level/useLevels';
 import useTimes from '@/hooks/fetchData/useTimes';
 import useDays from '@/hooks/fetchData/useDays';
 import TimeTable from '@/components/table/TimeTable';

@@ -6,7 +6,7 @@ import TitlePage from '@/components/text/TitlePage';
 import CardView from '@/components/card/CardView';
 import StatsWithIcon from '@/components/card/StatsWithIcon';
 import ScheduleTable from '@/components/table/ScheduleTable';
-import { useSchedules } from '@/hooks/fetchData/useSchedules';
+import { useSchedules } from '@/hooks/fetchData/schedule/useSchedules';
 
 function SchedulePage() {
   const { data, loading, error, setError, refetch } = useSchedules();

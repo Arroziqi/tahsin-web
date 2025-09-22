@@ -3,7 +3,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { handleApiError } from '@/lib/utils/errorHandler';
 import { updateSchedule } from '@/lib/schedule/updateSchedule';
-import { ScheduleResponseDataType } from '@/hooks/fetchData/useSchedules';
+import { ScheduleResponseDataType } from '@/hooks/fetchData/schedule/useSchedules';
 import useDays from '@/hooks/fetchData/useDays';
 import useTimes from '@/hooks/fetchData/useTimes';
 

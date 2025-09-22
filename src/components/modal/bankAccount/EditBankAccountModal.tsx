@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
-import { getErrorMessage, handleApiError } from '@/lib/utils/errorHandler';
+import { handleApiError } from '@/lib/utils/errorHandler';
 import { updateBankAccount } from '@/lib/bankAccount/updateBankAccount';
 import { BankAccountResponse } from '@/hooks/fetchData/useBankAccounts';
 
@@ -77,7 +77,6 @@ function EditBankAccountModal({
     } catch (error) {
       const handled = handleApiError(error);
       setError(handled.message);
-      console.error(getErrorMessage(handled));
     } finally {
       setLoading(false);
     }

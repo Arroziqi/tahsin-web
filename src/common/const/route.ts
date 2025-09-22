@@ -1,3 +1,5 @@
+import { ClassType } from '@/common/type/enrollment/enrollmentEnum';
+
 const API_BASE = '/admin/api';
 const PUBLIC_BASE = '/api';
 
@@ -27,6 +29,7 @@ export const API_ROUTES = {
     DELETE: (id: number) => `${API_BASE}/level/delete/${id}`,
     GET_ALL: `${API_BASE}/level/getAll`,
     GET_BY_ID: (id: number) => `${API_BASE}/level/get/${id}`,
+    GET_ASSIGNED: `${API_BASE}/level/getAssignedLevels`,
   },
 
   BATCH: {
@@ -127,6 +130,8 @@ export const API_ROUTES = {
     DELETE: (id: number) => `${API_BASE}/schedule/delete/${id}`,
     GET_ALL: `${API_BASE}/schedule/getAll`,
     GET_BY_ID: (id: number) => `${API_BASE}/schedule/get/${id}`,
+    GET_ASSIGNED_IN_PREFERRED: `${API_BASE}/schedule/getAssignedInPreferredSchedule`,
+    GET_BY_CLASS_TYPE: (classType: ClassType) => `${API_BASE}/schedule/getByClassType/${classType}`,
   },
 
   SCORE: {
@@ -145,6 +150,7 @@ export const API_ROUTES = {
     DELETE: (id: number) => `${API_BASE}/student/delete/${id}`,
     GET_ALL: `${API_BASE}/student/getAll`,
     GET_BY_ID: (id: number) => `${API_BASE}/student/get/${id}`,
+    GET_BY_LEVEL_AND_PREFERRED_SCHEDULE: `${API_BASE}/student/getByLevelAndPreferredSchedule`,
   },
 
   STUDENT_STATUS: {
@@ -288,5 +294,14 @@ export const API_ROUTES = {
     BASE: `${API_BASE}/settings`,
     UPDATE: `${API_BASE}/settings/update`,
     GET: `${API_BASE}/settings/get`,
+  },
+
+  CLASS_SCHEDULE: {
+    BASE: `${API_BASE}/class-schedule`,
+    CREATE: `${API_BASE}/class-schedule/create`,
+    UPDATE: `${API_BASE}/class-schedule/update`,
+    DELETE: (id: number) => `${API_BASE}/class-schedule/delete/${id}`,
+    GET_ALL: `${API_BASE}/class-schedule/getAll`,
+    GET_BY_ID: (id: number) => `${API_BASE}/class-schedule/get/${id}`,
   },
 };

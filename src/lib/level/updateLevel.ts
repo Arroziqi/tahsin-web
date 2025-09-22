@@ -1,5 +1,5 @@
 import API from '@/lib/utils/axios';
-import { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
+import { LevelResponseDataType } from '@/hooks/fetchData/level/useLevels';
 
 interface UpdateLevelPayload {
   id: number;

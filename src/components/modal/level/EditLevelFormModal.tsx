@@ -3,7 +3,7 @@ import ModalWithForm from '@/components/modal/ModalWithForm';
 import TextInputWithLabel from '@/components/input/TextInputWithLabel';
 import SelectInputWithLabel from '@/components/input/SelectInputWithLabel';
 import { updateLevel } from '@/lib/level/updateLevel';
-import { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
+import { LevelResponseDataType } from '@/hooks/fetchData/level/useLevels';
 import { handleApiError } from '@/lib/utils/errorHandler';
 
 interface EditLevelFormModalProps {

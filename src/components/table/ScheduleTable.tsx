@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ColumnDefinition } from '@/components/table/RichTable';
-import { ScheduleResponseDataType } from '@/hooks/fetchData/useSchedules';
+import { ScheduleResponseDataType } from '@/hooks/fetchData/schedule/useSchedules';
 import GenericTableWrapper from '@/components/table/GenericTableWrapper';
 import { Pencil, Trash2 } from 'lucide-react';
 import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModal';

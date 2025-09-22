@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import GenericTableWrapper from '@/components/table/GenericTableWrapper';
 import AddLevelFormModal from '@/components/modal/level/AddLevelFormModal';
 import { Pencil, Trash2 } from 'lucide-react';
-import { LevelResponseDataType } from '@/hooks/fetchData/useLevels';
+import { LevelResponseDataType } from '@/hooks/fetchData/level/useLevels';
 import EditLevelFormModal from '@/components/modal/level/EditLevelFormModal';
 import ConfirmationSuccessModal from '@/components/modal/ConfirmationSuccessModal';
 import ConfirmDeleteModal from '@/components/modal/ConfirmationDeleteModal';
